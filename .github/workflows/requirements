@@ -1,0 +1,11 @@
+# requirements.yml
+# Dependency list for the RSI Recovery scanners (usa/ and india/).
+# Kept as YAML (not requirements.txt) so it doubles as documentation.
+# The GitHub Actions workflow (.github/workflows/scan.yml) installs these
+# via a small PyYAML parsing step.
+
+dependencies:
+  - pandas
+  - numpy
+  - yfinance
+  - pyyaml
