@@ -40,8 +40,15 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Show repo root (debug)
+        run: |
+          echo "Working directory: $(pwd)"
+          echo "Files at repo root:"
+          ls -la
+
       - name: Install dependencies from requirements.yml
         run: |
+          test -f requirements.yml || { echo "::error::requirements.yml not found at repo root ($(pwd)). Make sure it is committed at the top level of the repo, not inside a subfolder."; exit 1; }
           python -m pip install --upgrade pip pyyaml
           python - <<'EOF'
           import yaml, subprocess
@@ -80,8 +87,15 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Show repo root (debug)
+        run: |
+          echo "Working directory: $(pwd)"
+          echo "Files at repo root:"
+          ls -la
+
       - name: Install dependencies from requirements.yml
         run: |
+          test -f requirements.yml || { echo "::error::requirements.yml not found at repo root ($(pwd)). Make sure it is committed at the top level of the repo, not inside a subfolder."; exit 1; }
           python -m pip install --upgrade pip pyyaml
           python - <<'EOF'
           import yaml, subprocess
