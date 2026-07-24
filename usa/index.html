@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RSI Recovery Scan — S&P 500 (US) · Daily (30-55 band, down &rarr; up)</title>
+<style>
+    :root {
+        --bg: #0b0e14; --panel: #131722; --panel2: #171c29; --border: #232838;
+        --text: #e6e9f0; --muted: #8b93a7; --accent: #00e5c7;
+        --pos: #26d07c; --neg: #ff5470;
+    }
+    * { box-sizing: border-box; }
+    body {
+        background: var(--bg); color: var(--text);
+        font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+        margin: 0; padding: 32px;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    h1 { font-size: 21px; margin: 0 0 3px; font-weight: 700; letter-spacing: -0.01em; }
+    .sub { color: var(--muted); font-size: 12.5px; font-weight: 300; }
+    .count { color: var(--accent); font-weight: 700; }
+
+    /* ============ Layered header: top / mid / bottom strips ============ */
+    .hdr { margin-bottom: 18px; }
+
+    /* -- Top strip: title + criteria summary chips -- */
+    .hdr-top {
+        display: flex; flex-direction: column; gap: 10px;
+        background: var(--panel); border: 1px solid var(--border);
+        border-radius: 10px 10px 0 0; padding: 14px 18px 12px;
+        border-bottom: none;
+    }
+    .criteria-chips {
+        display: flex; flex-wrap: nowrap; gap: 6px;
+        overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin;
+    }
+    .criteria-chips::-webkit-scrollbar { height: 4px; }
+    .criteria-chips::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .crit-chip {
+        font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+        font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+        padding: 4px 10px; border-radius: 999px; white-space: nowrap; flex: 0 0 auto;
+        background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+    }
+    .crit-chip b { color: var(--text); font-weight: 700; }
+    .crit-chip.band {
+        color: #0b0e14; font-weight: 700; border: none;
+        background: linear-gradient(90deg, var(--neg) 0%, #f5c518 50%, var(--pos) 100%);
+    }
+    .crit-chip.tf { color: var(--accent); border-color: rgba(0,229,199,0.35); background: rgba(0,229,199,0.08); }
+    .crit-chip.market { color: var(--text); font-weight: 700; border-color: var(--border); background: var(--panel); }
+
+    /* -- Middle strip: sector-pulse grid, ALL sectors, weakest->strongest RSI -- */
+    .ticker-strip {
+        display: block;
+        background: var(--panel2); border: 1px solid var(--border); border-top: none;
+        padding: 12px 18px 14px;
+    }
+    .ticker-label {
+        font-size: 10px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px;
+    }
+    .ticker-hint {
+        text-transform: none; font-weight: 500; letter-spacing: normal;
+        color: var(--muted); opacity: 0.75; font-size: 10px;
+    }
+    .ticker-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 8px;
+    }
+    .tick-chip {
+        display: flex; flex-direction: column; gap: 4px;
+        background: var(--panel); border: 1px solid var(--border);
+        border-radius: 8px; padding: 8px 10px;
+        cursor: pointer; user-select: none;
+        transition: opacity 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .tick-chip:hover { border-color: var(--accent); }
+    .tick-chip:active { transform: scale(0.98); }
+    .tick-chip.active {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 1px var(--accent);
+        background: rgba(0,229,199,0.08);
+    }
+    .ticker-grid.filtering .tick-chip:not(.active) { opacity: 0.4; }
+    .tick-row1 { display: flex; align-items: center; gap: 6px; }
+    .tick-row2 { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+    .tick-icon { font-size: 12px; }
+    .tick-sector { font-size: 11px; font-weight: 500; color: var(--muted);
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tick-rsi { font-size: 16px; font-weight: 700; font-stretch: condensed; letter-spacing: -0.02em; }
+    .tick-count { font-size: 9.5px; color: var(--muted); background: var(--panel2);
+        border-radius: 999px; padding: 1px 6px; white-space: nowrap; }
+    .tick-bar { height: 3px; border-radius: 999px; background: var(--panel2); overflow: hidden; }
+    .tick-bar span { display: block; height: 100%; border-radius: 999px; }
+    .tick-signals { font-size: 9.5px; font-weight: 600; color: var(--pos); }
+    .tick-signals.muted { color: var(--muted); font-weight: 500; }
+
+    /* -- Bottom strip: quick filters + status/actions bar -- */
+    .hdr-bottom {
+        display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+        background: var(--panel); border: 1px solid var(--border); border-top: none;
+        border-radius: 0 0 10px 10px; padding: 10px 18px;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 10px; }
+    .toolbar-left label { font-size: 12px; color: var(--muted); }
+    .toolbar-left select {
+        background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+        border-radius: 8px; padding: 6px 10px; font-size: 13px; cursor: pointer;
+    }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+    .action-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+        border-radius: 8px; padding: 6px 12px; font-size: 12.5px; font-weight: 600;
+        cursor: pointer; transition: border-color 0.15s, color 0.15s;
+    }
+    .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .action-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,199,0.08); }
+    .user-pill {
+        display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted);
+        background: var(--panel2); border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px 5px 6px;
+    }
+    .user-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pos); box-shadow: 0 0 0 3px rgba(38,208,124,0.18); }
+
+    table { width: 100%; border-collapse: collapse; background: var(--panel);
+        border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    th { text-align: left; font-size: 11px; text-transform: uppercase;
+        letter-spacing: 0.05em; color: var(--muted); padding: 10px 14px;
+        border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
+        white-space: nowrap; }
+    th:hover { color: var(--text); }
+    th.sorted::after { content: " \2195"; color: var(--accent); }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    .sym { font-weight: 600; }
+    .sector-tag { display: inline-block; margin-left: 8px; font-size: 10px; font-weight: 500;
+        color: var(--muted); background: var(--panel2); border: 1px solid var(--border);
+        border-radius: 5px; padding: 1px 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .pos { color: var(--pos); }
+    .neg { color: var(--neg); }
+    .rsi-badge { font-weight: 700; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; }
+    .chip { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; }
+    .chip-up { background: rgba(38,208,124,0.14); color: var(--pos); }
+    .chip-down { background: rgba(255,84,112,0.14); color: var(--neg); }
+    .chip-neutral { background: rgba(139,147,167,0.14); color: var(--muted); }
+    .spark { display: block; }
+    .empty { text-align: center; color: var(--muted); padding: 32px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="hdr">
+        <div class="hdr-top">
+            <div>
+                <h1>RSI Recovery Scan — S&P 500 (US) &middot; Daily &middot; 30&ndash;55 band, down &rarr; up only</h1>
+                <div class="sub">Generated 2026-07-24 22:11:29 · <span class="count">4</span> stock(s) matched</div>
+            </div>
+            <div class="criteria-chips" title="RSI(14) formed a real trough within 20 candles (declining >= 5.0 pts over 8 bars), recovered >= 5.0 pts off that trough, sits within 1.5 pts of its post-trough high, and is back above both the 9- and 21-period RSI averages.">
+                <span class="crit-chip market">S&P 500 (US)</span>
+                <span class="crit-chip tf">Daily</span>
+                <span class="crit-chip band">RSI 30&ndash;55</span>
+                <span class="crit-chip">Trough &le;<b>20</b>d</span>
+                <span class="crit-chip">Decline &ge;<b>5</b>pt</span>
+                <span class="crit-chip">Recovery &ge;<b>5</b>pt</span>
+                <span class="crit-chip">Whipsaw &le;<b>1.5</b>pt</span>
+                <span class="crit-chip">Above SMA<b>9</b>/<b>21</b></span>
+            </div>
+        </div>
+        
+    <div class="ticker-strip" role="group" aria-label="Sector pulse">
+        <div class="ticker-label">Sector pulse &middot; weakest &rarr; strongest RSI
+            <span class="ticker-hint" id="sectorFilterHint">&middot; click a sector to filter the table below</span>
+        </div>
+        <div class="ticker-grid" id="sectorGrid"><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,185,33)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Comm Services</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,185,33)">44.8</span><span class="tick-count">12 stocks</span></div><div class="tick-bar"><span style="width:44.8%;background:rgb(246,185,33)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,186,32)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">Technology</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,186,32)">45.3</span><span class="tick-count">17 stocks</span></div><div class="tick-bar"><span style="width:45.3%;background:rgb(246,186,32)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,187,31)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Cons Discretionary</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,187,31)">45.8</span><span class="tick-count">13 stocks</span></div><div class="tick-bar"><span style="width:45.8%;background:rgb(246,187,31)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,194,26)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">Cons Staples</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,194,26)">48.9</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:48.9%;background:rgb(245,194,26)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,196,25)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Materials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,196,25)">49.6</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:49.6%;background:rgb(245,196,25)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(233,198,30)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(233,198,30)">52.9</span><span class="tick-count">17 stocks</span></div><div class="tick-bar"><span style="width:52.9%;background:rgb(233,198,30)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(217,198,37)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Health Care</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(217,198,37)">56.7</span><span class="tick-count">16 stocks</span></div><div class="tick-bar"><span style="width:56.7%;background:rgb(217,198,37)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(215,199,38)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Utilities</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(215,199,38)">57.2</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:57.2%;background:rgb(215,199,38)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(212,199,40)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(212,199,40)">58.0</span><span class="tick-count">15 stocks</span></div><div class="tick-bar"><span style="width:58.0%;background:rgb(212,199,40)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(196,200,48)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Real Estate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(196,200,48)">61.8</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:61.8%;background:rgb(196,200,48)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Real Estate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(189,200,51)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(189,200,51)">63.5</span><span class="tick-count">12 stocks</span></div><div class="tick-bar"><span style="width:63.5%;background:rgb(189,200,51)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+    </div>
+        <div class="hdr-bottom">
+            <div class="toolbar-left">
+                <label for="quickFilter">Quick filter</label>
+                <select id="quickFilter" onchange="applyQuickFilter(this.value)">
+                    <option value="none">All (default order)</option>
+                    <option value="rsi">Strongest RSI</option>
+                    <option value="recovery">Top Recovery</option>
+                    <option value="trough">Recent Troughs</option>
+                </select>
+            </div>
+            <div class="toolbar-right">
+                <button class="action-btn" id="exportBtn" onclick="exportCSV()">&#8681; Export</button>
+                <button class="action-btn" id="alertsBtn" onclick="toggleAlerts()">&#128276; Alerts: <span id="alertsState">Off</span></button>
+                <span class="user-pill"><span class="user-dot"></span>Scanner &middot; Live</span>
+            </div>
+        </div>
+    </div>
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th data-key="symbol" data-type="text">Symbol</th>
+                <th data-key="ltp" data-type="num">LTP</th>
+                <th data-key="chg" data-type="num">Chg %</th>
+                <th data-key="rsi" data-type="num">RSI (now)</th>
+                <th data-key="trough" data-type="num">RSI (trough)</th>
+                <th data-key="trough-age" data-type="num">Trough</th>
+                <th data-key="sma" data-type="num">SMA9</th>
+                <th data-key="longsma" data-type="num">SMA21</th>
+                <th>Recovery shape</th>
+                <th>Trend</th>
+                <th data-key="recovery" data-type="num">Recovery</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-symbol="LOW" data-sector="Cons Discretionary"
+                data-rsi="45.59" data-recovery="8.18"
+                data-trough-age="3" data-chg="2.83">
+                <td class="sym">LOW<span class="sector-tag">Cons Discretionary</span></td>
+                <td>$207.64</td>
+                <td class="pos">+2.83%</td>
+                <td><span class="rsi-badge" style="background:rgb(246,187,32)22;color:rgb(246,187,32);border:1px solid rgb(246,187,32)55">45.59</span></td>
+                <td>37.4</td>
+                <td>3d ago</td>
+                <td>41.0</td>
+                <td>45.56</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.1 47.0,13.1 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+8.18 pts</td>
+            </tr>
+            <tr data-symbol="CSCO" data-sector="Technology"
+                data-rsi="49.39" data-recovery="8.42"
+                data-trough-age="6" data-chg="1.25">
+                <td class="sym">CSCO<span class="sector-tag">Technology</span></td>
+                <td>$114.17</td>
+                <td class="pos">+1.25%</td>
+                <td><span class="rsi-badge" style="background:rgb(245,196,25)22;color:rgb(245,196,25);border:1px solid rgb(245,196,25)55">49.39</span></td>
+                <td>40.97</td>
+                <td>6d ago</td>
+                <td>45.67</td>
+                <td>48.04</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,5.9 47.0,11.0 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+8.42 pts</td>
+            </tr>
+            <tr data-symbol="WEC" data-sector="Utilities"
+                data-rsi="54.11" data-recovery="12.74"
+                data-trough-age="3" data-chg="0.92">
+                <td class="sym">WEC<span class="sector-tag">Utilities</span></td>
+                <td>$115.77</td>
+                <td class="pos">+0.92%</td>
+                <td><span class="rsi-badge" style="background:rgb(228,198,32)22;color:rgb(228,198,32);border:1px solid rgb(228,198,32)55">54.11</span></td>
+                <td>41.37</td>
+                <td>3d ago</td>
+                <td>47.18</td>
+                <td>53.27</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,4.2 47.0,12.8 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+12.74 pts</td>
+            </tr>
+            <tr data-symbol="PSA" data-sector="Real Estate"
+                data-rsi="54.68" data-recovery="11.76"
+                data-trough-age="3" data-chg="2.37">
+                <td class="sym">PSA<span class="sector-tag">Real Estate</span></td>
+                <td>$322.48</td>
+                <td class="pos">+2.37%</td>
+                <td><span class="rsi-badge" style="background:rgb(226,198,33)22;color:rgb(226,198,33);border:1px solid rgb(226,198,33)55">54.68</span></td>
+                <td>42.92</td>
+                <td>3d ago</td>
+                <td>49.05</td>
+                <td>54.29</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.6 47.0,11.6 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+11.76 pts</td>
+            </tr>
+            <tr id="noSectorMatchRow" class="no-sector-match" style="display:none">
+                <td colspan="11" class="empty">No signal today in this sector. Click the sector again to clear the filter.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    // ---- Interactive column sorting ----
+    const table = document.getElementById('resultsTable');
+    const tbody = table.querySelector('tbody');
+    let sortState = { key: null, dir: 1 };
+
+    function cellValue(row, key, type) {
+        const map = {
+            symbol: () => row.dataset.symbol,
+            ltp: () => parseFloat(row.children[1].textContent),
+            chg: () => parseFloat(row.dataset.chg),
+            rsi: () => parseFloat(row.dataset.rsi),
+            trough: () => parseFloat(row.children[4].textContent),
+            'trough-age': () => parseFloat(row.dataset.troughAge),
+            sma: () => parseFloat(row.children[6].textContent),
+            longsma: () => parseFloat(row.children[7].textContent),
+            recovery: () => parseFloat(row.dataset.recovery),
+        };
+        const v = map[key] ? map[key]() : '';
+        return type === 'text' ? String(v) : (isNaN(v) ? -Infinity : v);
+    }
+
+    function sortRows(key, type, dir) {
+        const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.dataset.symbol);
+        if (!rows.length) return;
+        rows.sort((a, b) => {
+            const av = cellValue(a, key, type), bv = cellValue(b, key, type);
+            if (av < bv) return -1 * dir;
+            if (av > bv) return 1 * dir;
+            return 0;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+    }
+
+    table.querySelectorAll('th[data-key]').forEach(th => {
+        th.addEventListener('click', () => {
+            const key = th.dataset.key, type = th.dataset.type;
+            const dir = (sortState.key === key) ? -sortState.dir : -1;
+            sortState = { key, dir };
+            table.querySelectorAll('th').forEach(h => h.classList.remove('sorted'));
+            th.classList.add('sorted');
+            sortRows(key, type, dir);
+            document.getElementById('quickFilter').value = 'none';
+        });
+    });
+
+    // ---- Export visible rows to CSV ----
+    function exportCSV() {
+        const headerCells = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+        const dataRows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.dataset.symbol);
+        if (!dataRows.length) return;
+        const lines = [headerCells.join(',')];
+        dataRows.forEach(r => {
+            const cells = Array.from(r.children).map(td => '"' + td.textContent.trim().replace(/"/g, '""') + '"');
+            lines.push(cells.join(','));
+        });
+        const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'rsi_recovery_scan.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // ---- Alerts toggle (visual state only) ----
+    let alertsOn = false;
+    function toggleAlerts() {
+        alertsOn = !alertsOn;
+        document.getElementById('alertsBtn').classList.toggle('active', alertsOn);
+        document.getElementById('alertsState').textContent = alertsOn ? 'On' : 'Off';
+    }
+
+    // ---- Quick filter dropdown ----
+    function applyQuickFilter(value) {
+        table.querySelectorAll('th').forEach(h => h.classList.remove('sorted'));
+        if (value === 'rsi') { sortRows('rsi', 'num', -1); sortState = { key: 'rsi', dir: -1 }; }
+        else if (value === 'recovery') { sortRows('recovery', 'num', -1); sortState = { key: 'recovery', dir: -1 }; }
+        else if (value === 'trough') { sortRows('trough-age', 'num', 1); sortState = { key: 'trough-age', dir: 1 }; }
+    }
+
+    // ---- Sector-pulse click-to-filter ----
+    // Click a sector card to show only that sector's signal rows in the
+    // table below. Click the same card again (or press Escape) to clear
+    // the filter and show every row.
+    let activeSector = null;
+    const sectorGrid = document.getElementById('sectorGrid');
+    const noSectorMatchRow = document.getElementById('noSectorMatchRow');
+
+    function dataRows() {
+        return Array.from(tbody.querySelectorAll('tr')).filter(r => r.dataset.symbol);
+    }
+
+    function applySectorFilter(sector) {
+        const rows = dataRows();
+        let visible = 0;
+        rows.forEach(r => {
+            const match = r.dataset.sector === sector;
+            r.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        if (noSectorMatchRow) noSectorMatchRow.style.display = (visible === 0) ? '' : 'none';
+    }
+
+    function clearSectorFilter() {
+        dataRows().forEach(r => { r.style.display = ''; });
+        if (noSectorMatchRow) noSectorMatchRow.style.display = 'none';
+    }
+
+    function setActiveSector(sector, chipEl) {
+        activeSector = sector;
+        sectorGrid.classList.toggle('filtering', !!sector);
+        sectorGrid.querySelectorAll('.tick-chip').forEach(c => {
+            const isActive = sector && c === chipEl;
+            c.classList.toggle('active', isActive);
+            c.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        if (sector) applySectorFilter(sector);
+        else clearSectorFilter();
+    }
+
+    if (sectorGrid) {
+        sectorGrid.querySelectorAll('.tick-chip').forEach(chip => {
+            const sector = chip.dataset.sector;
+            const toggle = () => {
+                if (activeSector === sector) setActiveSector(null, null);
+                else setActiveSector(sector, chip);
+            };
+            chip.addEventListener('click', toggle);
+            chip.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+            });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && activeSector) setActiveSector(null, null);
+        });
+    }
+</script>
+</body>
+</html>
