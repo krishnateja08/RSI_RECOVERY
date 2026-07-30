@@ -150,6 +150,29 @@
     .chip-up { background: rgba(38,208,124,0.14); color: var(--pos); }
     .chip-down { background: rgba(255,84,112,0.14); color: var(--neg); }
     .chip-neutral { background: rgba(139,147,167,0.14); color: var(--muted); }
+
+    /* -- Trend filter tabs (All / Uptrend / Downtrend / Neutral) -- */
+    .trend-tabs {
+        display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .trend-tab {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+        border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+        cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .trend-tab:hover { border-color: var(--accent); color: var(--text); }
+    .trend-tab-count {
+        font-size: 10px; font-weight: 700; color: var(--muted);
+        background: rgba(139,147,167,0.14); border-radius: 999px; padding: 1px 7px;
+    }
+    .trend-tab.active { color: var(--text); border-color: var(--accent); background: rgba(0,229,199,0.08); }
+    .trend-tab.active .trend-tab-count { color: var(--accent); background: rgba(0,229,199,0.14); }
+    .trend-tab[data-trend="Uptrend"].active { border-color: var(--pos); background: rgba(38,208,124,0.10); }
+    .trend-tab[data-trend="Uptrend"].active .trend-tab-count { color: var(--pos); background: rgba(38,208,124,0.18); }
+    .trend-tab[data-trend="Downtrend"].active { border-color: var(--neg); background: rgba(255,84,112,0.10); }
+    .trend-tab[data-trend="Downtrend"].active .trend-tab-count { color: var(--neg); background: rgba(255,84,112,0.18); }
+    .trend-tab[data-trend="Neutral"].active { border-color: var(--muted); background: rgba(139,147,167,0.10); }
     .spark { display: block; }
     .empty { text-align: center; color: var(--muted); padding: 32px; }
 </style>
@@ -159,7 +182,7 @@
     <div class="hdr-top">
         <div>
             <h1>RSI Recovery Scan — All Timeframes &middot; 30&ndash;55 band, down &rarr; up only</h1>
-            <div class="sub" id="tfSubtitle">Generated 2026-07-30 14:52:05 &middot; <span class="count">7</span> stock(s) matched (Daily)</div>
+            <div class="sub" id="tfSubtitle">Generated 2026-07-30 20:15:26 &middot; <span class="count">14</span> stock(s) matched (Daily)</div>
         </div>
         <div class="criteria-chips" title="RSI(14) formed a real trough within 20 candles (declining >= 5.0 pts over 8 bars), recovered >= 5.0 pts off that trough, sits within 1.5 pts of its post-trough high, and is back above both the 9- and 21-period RSI averages.">
             <span class="crit-chip tf">Daily</span>
@@ -192,10 +215,17 @@
     <div class="tf-panel active" data-tf="1d">
         
         <div class="ticker-strip" role="group" aria-label="Sector pulse">
-            <div class="ticker-label">Sector pulse &middot; weakest &rarr; strongest RSI
+            <div class="ticker-label">Sector pulse &middot; most signals &rarr; fewest
                 <span class="ticker-hint">&middot; click a sector to filter the table below</span>
             </div>
-            <div class="ticker-grid"><div class="tick-chip" data-sector="Infra" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(247,174,42)55"><div class="tick-row1"><span class="tick-icon">🏗</span><span class="tick-sector">Infra</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(247,174,42)">39.9</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:39.9%;background:rgb(247,174,42)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Power" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,182,36)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Power</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,182,36)">43.4</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:43.4%;background:rgb(246,182,36)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Defence" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,184,34)55"><div class="tick-row1"><span class="tick-icon">🛡</span><span class="tick-sector">Defence</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,184,34)">44.1</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:44.1%;background:rgb(246,184,34)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Retail" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,186,33)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Retail</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,186,33)">44.9</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:44.9%;background:rgb(246,186,33)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Industrials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,188,31)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,188,31)">45.9</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:45.9%;background:rgb(246,188,31)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Metals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,190,29)55"><div class="tick-row1"><span class="tick-icon">🪙</span><span class="tick-sector">Metals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,190,29)">47.1</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:47.1%;background:rgb(246,190,29)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Conglomerate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,194,27)55"><div class="tick-row1"><span class="tick-icon">🏢</span><span class="tick-sector">Conglomerate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,194,27)">48.5</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:48.5%;background:rgb(245,194,27)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Energy" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,195,25)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,195,25)">49.2</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:49.2%;background:rgb(245,195,25)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Financials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(237,197,28)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(237,197,28)">51.9</span><span class="tick-count">23 stocks</span></div><div class="tick-bar"><span style="width:51.9%;background:rgb(237,197,28)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Cement" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(230,198,31)55"><div class="tick-row1"><span class="tick-icon">🧱</span><span class="tick-sector">Cement</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(230,198,31)">53.5</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:53.5%;background:rgb(230,198,31)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Aviation" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(230,198,31)55"><div class="tick-row1"><span class="tick-icon">✈</span><span class="tick-sector">Aviation</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(230,198,31)">53.6</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:53.6%;background:rgb(230,198,31)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Other" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(228,198,32)55"><div class="tick-row1"><span class="tick-icon">•</span><span class="tick-sector">Other</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(228,198,32)">54.1</span><span class="tick-count">3 stocks</span></div><div class="tick-bar"><span style="width:54.1%;background:rgb(228,198,32)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="FMCG" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(221,198,36)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">FMCG</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(221,198,36)">55.8</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:55.8%;background:rgb(221,198,36)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="ETF" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(214,199,39)55"><div class="tick-row1"><span class="tick-icon">📊</span><span class="tick-sector">ETF</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(214,199,39)">57.4</span><span class="tick-count">7 stocks</span></div><div class="tick-bar"><span style="width:57.4%;background:rgb(214,199,39)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Pharma" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(212,199,40)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Pharma</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(212,199,40)">58.0</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:58.0%;background:rgb(212,199,40)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Auto" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(200,199,46)55"><div class="tick-row1"><span class="tick-icon">🚗</span><span class="tick-sector">Auto</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(200,199,46)">60.8</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:60.8%;background:rgb(200,199,46)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Chemicals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(195,200,48)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Chemicals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(195,200,48)">62.1</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:62.1%;background:rgb(195,200,48)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Realty" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(193,200,49)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Realty</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(193,200,49)">62.4</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:62.4%;background:rgb(193,200,49)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Hospitality" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(190,200,50)55"><div class="tick-row1"><span class="tick-icon">🏨</span><span class="tick-sector">Hospitality</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(190,200,50)">63.2</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:63.2%;background:rgb(190,200,50)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Telecom" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(184,200,54)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Telecom</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(184,200,54)">64.8</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:64.8%;background:rgb(184,200,54)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="IT" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(158,202,66)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">IT</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(158,202,66)">71.0</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:71.0%;background:rgb(158,202,66)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Consumer" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(145,202,72)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Consumer</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(145,202,72)">74.2</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:74.2%;background:rgb(145,202,72)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+            <div class="ticker-grid"><div class="tick-chip" data-sector="Financials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(232,198,30)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(232,198,30)">53.0</span><span class="tick-count">23 stocks</span></div><div class="tick-bar"><span style="width:53.0%;background:rgb(232,198,30)"></span></div><span class="tick-signals">4 signals</span></div><div class="tick-chip" data-sector="Metals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,184,34)55"><div class="tick-row1"><span class="tick-icon">🪙</span><span class="tick-sector">Metals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,184,34)">44.1</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:44.1%;background:rgb(246,184,34)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="FMCG" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(222,198,35)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">FMCG</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(222,198,35)">55.5</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:55.5%;background:rgb(222,198,35)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="Infra" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,181,37)55"><div class="tick-row1"><span class="tick-icon">🏗</span><span class="tick-sector">Infra</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,181,37)">42.7</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:42.7%;background:rgb(246,181,37)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Cement" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(225,198,34)55"><div class="tick-row1"><span class="tick-icon">🧱</span><span class="tick-sector">Cement</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(225,198,34)">54.8</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:54.8%;background:rgb(225,198,34)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="ETF" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(219,198,36)55"><div class="tick-row1"><span class="tick-icon">📊</span><span class="tick-sector">ETF</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(219,198,36)">56.2</span><span class="tick-count">7 stocks</span></div><div class="tick-bar"><span style="width:56.2%;background:rgb(219,198,36)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Pharma" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(214,199,39)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Pharma</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(214,199,39)">57.4</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:57.4%;background:rgb(214,199,39)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Power" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,181,36)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Power</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,181,36)">43.0</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:43.0%;background:rgb(246,181,36)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Retail" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,183,35)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Retail</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,183,35)">43.8</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:43.8%;background:rgb(246,183,35)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Defence" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,184,34)55"><div class="tick-row1"><span class="tick-icon">🛡</span><span class="tick-sector">Defence</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,184,34)">44.5</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:44.5%;background:rgb(246,184,34)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Industrials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,187,32)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,187,32)">45.4</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:45.4%;background:rgb(246,187,32)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Conglomerate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,188,31)55"><div class="tick-row1"><span class="tick-icon">🏢</span><span class="tick-sector">Conglomerate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,188,31)">45.9</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:45.9%;background:rgb(246,188,31)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Energy" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,193,27)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,193,27)">48.0</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:48.0%;background:rgb(245,193,27)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Other" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(223,198,35)55"><div class="tick-row1"><span class="tick-icon">•</span><span class="tick-sector">Other</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(223,198,35)">55.4</span><span class="tick-count">3 stocks</span></div><div class="tick-bar"><span style="width:55.4%;background:rgb(223,198,35)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Aviation" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(220,198,36)55"><div class="tick-row1"><span class="tick-icon">✈</span><span class="tick-sector">Aviation</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(220,198,36)">55.9</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:55.9%;background:rgb(220,198,36)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Auto" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(215,199,38)55"><div class="tick-row1"><span class="tick-icon">🚗</span><span class="tick-sector">Auto</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(215,199,38)">57.2</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:57.2%;background:rgb(215,199,38)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Hospitality" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(210,199,41)55"><div class="tick-row1"><span class="tick-icon">🏨</span><span class="tick-sector">Hospitality</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(210,199,41)">58.6</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:58.6%;background:rgb(210,199,41)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Chemicals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(190,200,51)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Chemicals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(190,200,51)">63.4</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:63.4%;background:rgb(190,200,51)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Telecom" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(188,200,52)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Telecom</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(188,200,52)">63.8</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:63.8%;background:rgb(188,200,52)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Realty" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(170,201,60)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Realty</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(170,201,60)">68.2</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:68.2%;background:rgb(170,201,60)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="IT" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(161,201,64)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">IT</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(161,201,64)">70.2</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:70.2%;background:rgb(161,201,64)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Consumer" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(142,202,74)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Consumer</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(142,202,74)">74.8</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:74.8%;background:rgb(142,202,74)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+        </div>
+        
+        <div class="trend-tabs" role="tablist" aria-label="Trend filter">
+            <button class="trend-tab active" data-trend="all" role="tab" aria-selected="true">All <span class="trend-tab-count">14</span></button>
+            <button class="trend-tab" data-trend="Uptrend" role="tab" aria-selected="false">Uptrend <span class="trend-tab-count">9</span></button>
+            <button class="trend-tab" data-trend="Downtrend" role="tab" aria-selected="false">Downtrend <span class="trend-tab-count">3</span></button>
+            <button class="trend-tab" data-trend="Neutral" role="tab" aria-selected="false">Neutral <span class="trend-tab-count">2</span></button>
         </div>
         <table>
             <thead>
@@ -214,113 +244,218 @@
                 </tr>
             </thead>
             <tbody>
-            <tr data-symbol="VBL" data-sector="FMCG"
-                data-rsi="38.69" data-recovery="13.82"
-                data-trough-age="2" data-chg="0.93">
-                <td class="sym">VBL<span class="sector-tag">FMCG</span></td>
-                <td>451.35</td>
-                <td class="pos">+0.93%</td>
-                <td><span class="rsi-badge" style="background:rgb(247,171,44)22;color:rgb(247,171,44);border:1px solid rgb(247,171,44)55">38.69</span></td>
-                <td>24.87</td>
-                <td>2d ago</td>
-                <td>32.96</td>
-                <td>34.39</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,8.6 47.0,10.5 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
-                <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+13.82 pts</td>
-            </tr>
-            <tr data-symbol="VEDL" data-sector="Metals"
-                data-rsi="42.49" data-recovery="17.5"
-                data-trough-age="9" data-chg="1.13">
-                <td class="sym">VEDL<span class="sector-tag">Metals</span></td>
-                <td>267.5</td>
-                <td class="pos">+1.13%</td>
-                <td><span class="rsi-badge" style="background:rgb(247,180,37)22;color:rgb(247,180,37);border:1px solid rgb(247,180,37)55">42.49</span></td>
-                <td>25.0</td>
-                <td>9d ago</td>
-                <td>36.9</td>
-                <td>33.54</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,12.2 47.0,8.8 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
-                <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+17.5 pts</td>
-            </tr>
-            <tr data-symbol="IRFC" data-sector="Financials"
-                data-rsi="44.71" data-recovery="16.83"
-                data-trough-age="16" data-chg="-0.24">
-                <td class="sym">IRFC<span class="sector-tag">Financials</span></td>
-                <td>88.92</td>
-                <td class="neg">-0.24%</td>
-                <td><span class="rsi-badge" style="background:rgb(246,185,33)22;color:rgb(246,185,33);border:1px solid rgb(246,185,33)55">44.71</span></td>
-                <td>27.88</td>
-                <td>16d ago</td>
-                <td>37.2</td>
-                <td>35.62</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,12.7 47.0,11.0 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
-                <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+16.83 pts</td>
-            </tr>
-            <tr data-symbol="TATASTEEL" data-sector="Metals"
-                data-rsi="46.68" data-recovery="12.6"
-                data-trough-age="4" data-chg="-0.19">
-                <td class="sym">TATASTEEL<span class="sector-tag">Metals</span></td>
-                <td>186.92</td>
-                <td class="neg">-0.19%</td>
-                <td><span class="rsi-badge" style="background:rgb(246,189,30)22;color:rgb(246,189,30);border:1px solid rgb(246,189,30)55">46.68</span></td>
-                <td>34.07</td>
+            <tr data-symbol="AXISBANK" data-sector="Financials" data-trend="Neutral"
+                data-rsi="34.92" data-recovery="5.47"
+                data-trough-age="4" data-chg="0.97">
+                <td class="sym">AXISBANK<span class="sector-tag">Financials</span></td>
+                <td>1235.4</td>
+                <td class="pos">+0.97%</td>
+                <td><span class="rsi-badge" style="background:rgb(248,163,51)22;color:rgb(248,163,51);border:1px solid rgb(248,163,51)55">34.92</span></td>
+                <td>29.44</td>
                 <td>4d ago</td>
-                <td>40.16</td>
-                <td>39.56</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,13.2 47.0,12.3 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
-                <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+12.6 pts</td>
+                <td>34.2</td>
+                <td>42.29</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,14.3 69.0,13.3" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="13.3" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+5.47 pts</td>
             </tr>
-            <tr data-symbol="AMBUJACEM" data-sector="Cement"
-                data-rsi="52.32" data-recovery="7.44"
-                data-trough-age="5" data-chg="-0.25">
-                <td class="sym">AMBUJACEM<span class="sector-tag">Cement</span></td>
-                <td>434.2</td>
-                <td class="neg">-0.25%</td>
-                <td><span class="rsi-badge" style="background:rgb(235,198,29)22;color:rgb(235,198,29);border:1px solid rgb(235,198,29)55">52.32</span></td>
-                <td>44.88</td>
-                <td>5d ago</td>
-                <td>50.47</td>
-                <td>52.02</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.7 47.0,7.5 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+            <tr data-symbol="VBL" data-sector="FMCG" data-trend="Uptrend"
+                data-rsi="36.27" data-recovery="11.4"
+                data-trough-age="1" data-chg="4.0">
+                <td class="sym">VBL<span class="sector-tag">FMCG</span></td>
+                <td>447.2</td>
+                <td class="pos">+4.00%</td>
+                <td><span class="rsi-badge" style="background:rgb(248,166,48)22;color:rgb(248,166,48);border:1px solid rgb(248,166,48)55">36.27</span></td>
+                <td>24.87</td>
+                <td>1d ago</td>
+                <td>32.06</td>
+                <td>34.89</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,5.2 47.0,9.6 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
                 <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+7.44 pts</td>
+                <td>+11.4 pts</td>
             </tr>
-            <tr data-symbol="LT" data-sector="Infra"
-                data-rsi="52.71" data-recovery="23.19"
-                data-trough-age="10" data-chg="0.16">
+            <tr data-symbol="HDFCBANK" data-sector="Financials" data-trend="Downtrend"
+                data-rsi="38.48" data-recovery="6.7"
+                data-trough-age="1" data-chg="1.74">
+                <td class="sym">HDFCBANK<span class="sector-tag">Financials</span></td>
+                <td>748.2</td>
+                <td class="pos">+1.74%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,171,44)22;color:rgb(247,171,44);border:1px solid rgb(247,171,44)55">38.48</span></td>
+                <td>31.79</td>
+                <td>1d ago</td>
+                <td>38.87</td>
+                <td>53.28</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,15.1 69.0,15.4" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="15.4" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+6.7 pts</td>
+            </tr>
+            <tr data-symbol="VEDL" data-sector="Metals" data-trend="Uptrend"
+                data-rsi="39.47" data-recovery="14.47"
+                data-trough-age="8" data-chg="1.99">
+                <td class="sym">VEDL<span class="sector-tag">Metals</span></td>
+                <td>264.5</td>
+                <td class="pos">+1.99%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,173,43)22;color:rgb(247,173,43);border:1px solid rgb(247,173,43)55">39.47</span></td>
+                <td>25.0</td>
+                <td>8d ago</td>
+                <td>34.96</td>
+                <td>33.01</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,11.0 47.0,8.6 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+14.47 pts</td>
+            </tr>
+            <tr data-symbol="IRFC" data-sector="Financials" data-trend="Uptrend"
+                data-rsi="45.55" data-recovery="17.66"
+                data-trough-age="15" data-chg="2.27">
+                <td class="sym">IRFC<span class="sector-tag">Financials</span></td>
+                <td>89.13</td>
+                <td class="pos">+2.27%</td>
+                <td><span class="rsi-badge" style="background:rgb(246,187,32)22;color:rgb(246,187,32);border:1px solid rgb(246,187,32)55">45.55</span></td>
+                <td>27.88</td>
+                <td>15d ago</td>
+                <td>36.12</td>
+                <td>35.19</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,13.6 47.0,12.6 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+17.66 pts</td>
+            </tr>
+            <tr data-symbol="HINDUNILVR" data-sector="FMCG" data-trend="Downtrend"
+                data-rsi="47.22" data-recovery="13.96"
+                data-trough-age="1" data-chg="4.7">
+                <td class="sym">HINDUNILVR<span class="sector-tag">FMCG</span></td>
+                <td>2117.8</td>
+                <td class="pos">+4.70%</td>
+                <td><span class="rsi-badge" style="background:rgb(246,191,29)22;color:rgb(246,191,29);border:1px solid rgb(246,191,29)55">47.22</span></td>
+                <td>33.26</td>
+                <td>1d ago</td>
+                <td>48.03</td>
+                <td>48.46</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,3.5 69.0,4.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="4.5" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+13.96 pts</td>
+            </tr>
+            <tr data-symbol="TATASTEEL" data-sector="Metals" data-trend="Uptrend"
+                data-rsi="47.36" data-recovery="13.28"
+                data-trough-age="3" data-chg="2.54">
+                <td class="sym">TATASTEEL<span class="sector-tag">Metals</span></td>
+                <td>187.27</td>
+                <td class="pos">+2.54%</td>
+                <td><span class="rsi-badge" style="background:rgb(246,191,29)22;color:rgb(246,191,29);border:1px solid rgb(246,191,29)55">47.36</span></td>
+                <td>34.07</td>
+                <td>3d ago</td>
+                <td>39.25</td>
+                <td>38.7</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,14.7 47.0,14.0 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+13.28 pts</td>
+            </tr>
+            <tr data-symbol="HINDALCO" data-sector="Metals" data-trend="Uptrend"
+                data-rsi="48.62" data-recovery="15.14"
+                data-trough-age="19" data-chg="2.78">
+                <td class="sym">HINDALCO<span class="sector-tag">Metals</span></td>
+                <td>962.45</td>
+                <td class="pos">+2.78%</td>
+                <td><span class="rsi-badge" style="background:rgb(245,194,26)22;color:rgb(245,194,26);border:1px solid rgb(245,194,26)55">48.62</span></td>
+                <td>33.48</td>
+                <td>19d ago</td>
+                <td>40.81</td>
+                <td>40.36</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,12.8 47.0,12.3 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+15.14 pts</td>
+            </tr>
+            <tr data-symbol="BANKBEES" data-sector="ETF" data-trend="Downtrend"
+                data-rsi="49.31" data-recovery="5.24"
+                data-trough-age="4" data-chg="0.71">
+                <td class="sym">BANKBEES<span class="sector-tag">ETF</span></td>
+                <td>591.74</td>
+                <td class="pos">+0.71%</td>
+                <td><span class="rsi-badge" style="background:rgb(245,195,25)22;color:rgb(245,195,25);border:1px solid rgb(245,195,25)55">49.31</span></td>
+                <td>44.07</td>
+                <td>4d ago</td>
+                <td>50.28</td>
+                <td>55.18</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,10.9 69.0,12.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="12.5" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+5.24 pts</td>
+            </tr>
+            <tr data-symbol="ZYDUSLIFE" data-sector="Pharma" data-trend="Neutral"
+                data-rsi="51.83" data-recovery="8.99"
+                data-trough-age="1" data-chg="2.14">
+                <td class="sym">ZYDUSLIFE<span class="sector-tag">Pharma</span></td>
+                <td>1122.7</td>
+                <td class="pos">+2.14%</td>
+                <td><span class="rsi-badge" style="background:rgb(237,197,28)22;color:rgb(237,197,28);border:1px solid rgb(237,197,28)55">51.83</span></td>
+                <td>42.85</td>
+                <td>1d ago</td>
+                <td>51.46</td>
+                <td>58.72</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,11.2 69.0,10.8" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="10.8" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+8.99 pts</td>
+            </tr>
+            <tr data-symbol="LT" data-sector="Infra" data-trend="Uptrend"
+                data-rsi="52.08" data-recovery="22.56"
+                data-trough-age="9" data-chg="2.59">
                 <td class="sym">LT<span class="sector-tag">Infra</span></td>
-                <td>3937.7</td>
-                <td class="pos">+0.16%</td>
-                <td><span class="rsi-badge" style="background:rgb(234,198,29)22;color:rgb(234,198,29);border:1px solid rgb(234,198,29)55">52.71</span></td>
+                <td>3931.4</td>
+                <td class="pos">+2.59%</td>
+                <td><span class="rsi-badge" style="background:rgb(236,197,28)22;color:rgb(236,197,28);border:1px solid rgb(236,197,28)55">52.08</span></td>
                 <td>29.53</td>
-                <td>10d ago</td>
-                <td>40.24</td>
-                <td>38.76</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,13.8 47.0,12.7 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td>9d ago</td>
+                <td>38.22</td>
+                <td>38.65</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,13.7 47.0,14.1 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
                 <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+23.19 pts</td>
+                <td>+22.56 pts</td>
             </tr>
-            <tr data-symbol="KOTAKBANK" data-sector="Financials"
-                data-rsi="53.08" data-recovery="20.27"
-                data-trough-age="16" data-chg="-0.21">
-                <td class="sym">KOTAKBANK<span class="sector-tag">Financials</span></td>
-                <td>389.4</td>
-                <td class="neg">-0.21%</td>
-                <td><span class="rsi-badge" style="background:rgb(232,198,30)22;color:rgb(232,198,30);border:1px solid rgb(232,198,30)55">53.08</span></td>
-                <td>32.81</td>
-                <td>16d ago</td>
-                <td>49.47</td>
-                <td>45.91</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,9.4 47.0,6.2 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+            <tr data-symbol="AMBUJACEM" data-sector="Cement" data-trend="Uptrend"
+                data-rsi="53.1" data-recovery="8.22"
+                data-trough-age="4" data-chg="2.18">
+                <td class="sym">AMBUJACEM<span class="sector-tag">Cement</span></td>
+                <td>435.3</td>
+                <td class="pos">+2.18%</td>
+                <td><span class="rsi-badge" style="background:rgb(232,198,30)22;color:rgb(232,198,30);border:1px solid rgb(232,198,30)55">53.1</span></td>
+                <td>44.88</td>
+                <td>4d ago</td>
+                <td>50.81</td>
+                <td>51.65</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,6.2 47.0,8.0 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
                 <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+20.27 pts</td>
+                <td>+8.22 pts</td>
+            </tr>
+            <tr data-symbol="KOTAKBANK" data-sector="Financials" data-trend="Uptrend"
+                data-rsi="53.87" data-recovery="21.06"
+                data-trough-age="15" data-chg="1.27">
+                <td class="sym">KOTAKBANK<span class="sector-tag">Financials</span></td>
+                <td>390.2</td>
+                <td class="pos">+1.27%</td>
+                <td><span class="rsi-badge" style="background:rgb(229,198,32)22;color:rgb(229,198,32);border:1px solid rgb(229,198,32)55">53.87</span></td>
+                <td>32.81</td>
+                <td>15d ago</td>
+                <td>49.38</td>
+                <td>45.99</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,9.7 47.0,6.8 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+21.06 pts</td>
+            </tr>
+            <tr data-symbol="ITC" data-sector="FMCG" data-trend="Uptrend"
+                data-rsi="54.13" data-recovery="24.17"
+                data-trough-age="11" data-chg="0.56">
+                <td class="sym">ITC<span class="sector-tag">FMCG</span></td>
+                <td>286.25</td>
+                <td class="pos">+0.56%</td>
+                <td><span class="rsi-badge" style="background:rgb(228,198,32)22;color:rgb(228,198,32);border:1px solid rgb(228,198,32)55">54.13</span></td>
+                <td>29.96</td>
+                <td>11d ago</td>
+                <td>47.25</td>
+                <td>43.83</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,10.7 47.0,8.1 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+24.17 pts</td>
             </tr>
                 <tr class="no-sector-match" style="display:none">
-                    <td colspan="11" class="empty">No signal today in this sector. Click the sector again to clear the filter.</td>
+                    <td colspan="11" class="empty">No signals match the current filter(s). Adjust or clear the sector/trend filter above.</td>
                 </tr>
             </tbody>
         </table>
@@ -328,10 +463,17 @@
     <div class="tf-panel " data-tf="1h" style="display:none">
         
         <div class="ticker-strip" role="group" aria-label="Sector pulse">
-            <div class="ticker-label">Sector pulse &middot; weakest &rarr; strongest RSI
+            <div class="ticker-label">Sector pulse &middot; most signals &rarr; fewest
                 <span class="ticker-hint">&middot; click a sector to filter the table below</span>
             </div>
-            <div class="ticker-grid"><div class="tick-chip" data-sector="Infra" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(247,178,39)55"><div class="tick-row1"><span class="tick-icon">🏗</span><span class="tick-sector">Infra</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(247,178,39)">41.7</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:41.7%;background:rgb(247,178,39)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Defence" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,185,33)55"><div class="tick-row1"><span class="tick-icon">🛡</span><span class="tick-sector">Defence</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,185,33)">44.6</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:44.6%;background:rgb(246,185,33)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Power" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,187,32)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Power</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,187,32)">45.6</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:45.6%;background:rgb(246,187,32)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Industrials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,187,32)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,187,32)">45.7</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:45.7%;background:rgb(246,187,32)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="Cement" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,190,29)55"><div class="tick-row1"><span class="tick-icon">🧱</span><span class="tick-sector">Cement</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,190,29)">47.0</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:47.0%;background:rgb(246,190,29)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Aviation" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,196,25)55"><div class="tick-row1"><span class="tick-icon">✈</span><span class="tick-sector">Aviation</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,196,25)">49.4</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:49.4%;background:rgb(245,196,25)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Realty" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(243,197,25)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Realty</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(243,197,25)">50.5</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:50.5%;background:rgb(243,197,25)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Energy" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(241,197,26)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(241,197,26)">51.0</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:51.0%;background:rgb(241,197,26)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Financials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(231,198,31)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(231,198,31)">53.3</span><span class="tick-count">23 stocks</span></div><div class="tick-bar"><span style="width:53.3%;background:rgb(231,198,31)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Other" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(226,198,33)55"><div class="tick-row1"><span class="tick-icon">•</span><span class="tick-sector">Other</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(226,198,33)">54.5</span><span class="tick-count">3 stocks</span></div><div class="tick-bar"><span style="width:54.5%;background:rgb(226,198,33)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Retail" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(222,198,35)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Retail</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(222,198,35)">55.6</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:55.6%;background:rgb(222,198,35)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="FMCG" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(222,198,35)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">FMCG</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(222,198,35)">55.7</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:55.7%;background:rgb(222,198,35)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Pharma" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(218,198,37)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Pharma</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(218,198,37)">56.6</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:56.6%;background:rgb(218,198,37)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Conglomerate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(215,199,38)55"><div class="tick-row1"><span class="tick-icon">🏢</span><span class="tick-sector">Conglomerate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(215,199,38)">57.2</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:57.2%;background:rgb(215,199,38)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Chemicals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(213,199,39)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Chemicals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(213,199,39)">57.6</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:57.6%;background:rgb(213,199,39)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Metals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(202,199,45)55"><div class="tick-row1"><span class="tick-icon">🪙</span><span class="tick-sector">Metals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(202,199,45)">60.4</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:60.4%;background:rgb(202,199,45)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="ETF" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(200,199,46)55"><div class="tick-row1"><span class="tick-icon">📊</span><span class="tick-sector">ETF</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(200,199,46)">60.9</span><span class="tick-count">7 stocks</span></div><div class="tick-bar"><span style="width:60.9%;background:rgb(200,199,46)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="IT" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(192,200,50)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">IT</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(192,200,50)">62.8</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:62.8%;background:rgb(192,200,50)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Consumer" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(187,200,52)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Consumer</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(187,200,52)">64.0</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:64.0%;background:rgb(187,200,52)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Auto" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(179,201,56)55"><div class="tick-row1"><span class="tick-icon">🚗</span><span class="tick-sector">Auto</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(179,201,56)">66.0</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:66.0%;background:rgb(179,201,56)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Hospitality" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(178,201,56)55"><div class="tick-row1"><span class="tick-icon">🏨</span><span class="tick-sector">Hospitality</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(178,201,56)">66.2</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:66.2%;background:rgb(178,201,56)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Telecom" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(164,201,63)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Telecom</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(164,201,63)">69.6</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:69.6%;background:rgb(164,201,63)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+            <div class="ticker-grid"><div class="tick-chip" data-sector="Financials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(231,198,31)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(231,198,31)">53.3</span><span class="tick-count">23 stocks</span></div><div class="tick-bar"><span style="width:53.3%;background:rgb(231,198,31)"></span></div><span class="tick-signals">4 signals</span></div><div class="tick-chip" data-sector="Industrials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,187,32)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,187,32)">45.7</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:45.7%;background:rgb(246,187,32)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="Cement" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,190,29)55"><div class="tick-row1"><span class="tick-icon">🧱</span><span class="tick-sector">Cement</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,190,29)">47.0</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:47.0%;background:rgb(246,190,29)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="Defence" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,185,33)55"><div class="tick-row1"><span class="tick-icon">🛡</span><span class="tick-sector">Defence</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,185,33)">44.6</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:44.6%;background:rgb(246,185,33)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="ETF" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(200,199,46)55"><div class="tick-row1"><span class="tick-icon">📊</span><span class="tick-sector">ETF</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(200,199,46)">60.9</span><span class="tick-count">7 stocks</span></div><div class="tick-bar"><span style="width:60.9%;background:rgb(200,199,46)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Power" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,187,32)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Power</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,187,32)">45.6</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:45.6%;background:rgb(246,187,32)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Pharma" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(218,198,37)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Pharma</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(218,198,37)">56.6</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:56.6%;background:rgb(218,198,37)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Chemicals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(213,199,39)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Chemicals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(213,199,39)">57.6</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:57.6%;background:rgb(213,199,39)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Metals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(202,199,45)55"><div class="tick-row1"><span class="tick-icon">🪙</span><span class="tick-sector">Metals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(202,199,45)">60.4</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:60.4%;background:rgb(202,199,45)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Infra" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(247,178,39)55"><div class="tick-row1"><span class="tick-icon">🏗</span><span class="tick-sector">Infra</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(247,178,39)">41.7</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:41.7%;background:rgb(247,178,39)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Aviation" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,196,25)55"><div class="tick-row1"><span class="tick-icon">✈</span><span class="tick-sector">Aviation</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,196,25)">49.4</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:49.4%;background:rgb(245,196,25)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Realty" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(243,197,25)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Realty</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(243,197,25)">50.5</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:50.5%;background:rgb(243,197,25)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Energy" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(241,197,26)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(241,197,26)">51.0</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:51.0%;background:rgb(241,197,26)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Other" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(226,198,33)55"><div class="tick-row1"><span class="tick-icon">•</span><span class="tick-sector">Other</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(226,198,33)">54.5</span><span class="tick-count">3 stocks</span></div><div class="tick-bar"><span style="width:54.5%;background:rgb(226,198,33)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Retail" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(222,198,35)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Retail</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(222,198,35)">55.6</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:55.6%;background:rgb(222,198,35)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="FMCG" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(222,198,35)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">FMCG</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(222,198,35)">55.7</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:55.7%;background:rgb(222,198,35)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Conglomerate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(215,199,38)55"><div class="tick-row1"><span class="tick-icon">🏢</span><span class="tick-sector">Conglomerate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(215,199,38)">57.2</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:57.2%;background:rgb(215,199,38)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="IT" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(192,200,50)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">IT</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(192,200,50)">62.8</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:62.8%;background:rgb(192,200,50)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Consumer" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(187,200,52)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Consumer</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(187,200,52)">64.0</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:64.0%;background:rgb(187,200,52)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Auto" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(179,201,56)55"><div class="tick-row1"><span class="tick-icon">🚗</span><span class="tick-sector">Auto</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(179,201,56)">66.0</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:66.0%;background:rgb(179,201,56)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Hospitality" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(178,201,56)55"><div class="tick-row1"><span class="tick-icon">🏨</span><span class="tick-sector">Hospitality</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(178,201,56)">66.2</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:66.2%;background:rgb(178,201,56)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Telecom" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(164,201,63)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Telecom</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(164,201,63)">69.6</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:69.6%;background:rgb(164,201,63)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+        </div>
+        
+        <div class="trend-tabs" role="tablist" aria-label="Trend filter">
+            <button class="trend-tab active" data-trend="all" role="tab" aria-selected="true">All <span class="trend-tab-count">18</span></button>
+            <button class="trend-tab" data-trend="Uptrend" role="tab" aria-selected="false">Uptrend <span class="trend-tab-count">11</span></button>
+            <button class="trend-tab" data-trend="Downtrend" role="tab" aria-selected="false">Downtrend <span class="trend-tab-count">2</span></button>
+            <button class="trend-tab" data-trend="Neutral" role="tab" aria-selected="false">Neutral <span class="trend-tab-count">5</span></button>
         </div>
         <table>
             <thead>
@@ -350,7 +492,7 @@
                 </tr>
             </thead>
             <tbody>
-            <tr data-symbol="BEL" data-sector="Defence"
+            <tr data-symbol="BEL" data-sector="Defence" data-trend="Uptrend"
                 data-rsi="32.69" data-recovery="13.68"
                 data-trough-age="12" data-chg="0.06">
                 <td class="sym">BEL<span class="sector-tag">Defence</span></td>
@@ -365,7 +507,22 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+13.68 pts</td>
             </tr>
-            <tr data-symbol="SOLARINDS" data-sector="Defence"
+            <tr data-symbol="SHREECEM" data-sector="Cement" data-trend="Downtrend"
+                data-rsi="38.05" data-recovery="5.58"
+                data-trough-age="4" data-chg="-0.06">
+                <td class="sym">SHREECEM<span class="sector-tag">Cement</span></td>
+                <td>26455.0</td>
+                <td class="neg">-0.06%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,170,45)22;color:rgb(247,170,45);border:1px solid rgb(247,170,45)55">38.05</span></td>
+                <td>32.46</td>
+                <td>4d ago</td>
+                <td>39.05</td>
+                <td>45.49</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,11.9 69.0,13.3" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="13.3" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+5.58 pts</td>
+            </tr>
+            <tr data-symbol="SOLARINDS" data-sector="Defence" data-trend="Uptrend"
                 data-rsi="39.52" data-recovery="10.77"
                 data-trough-age="5" data-chg="-0.04">
                 <td class="sym">SOLARINDS<span class="sector-tag">Defence</span></td>
@@ -380,7 +537,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+10.77 pts</td>
             </tr>
-            <tr data-symbol="CUMMINSIND" data-sector="Industrials"
+            <tr data-symbol="CUMMINSIND" data-sector="Industrials" data-trend="Uptrend"
                 data-rsi="40.38" data-recovery="13.26"
                 data-trough-age="6" data-chg="-0.03">
                 <td class="sym">CUMMINSIND<span class="sector-tag">Industrials</span></td>
@@ -395,7 +552,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+13.26 pts</td>
             </tr>
-            <tr data-symbol="ADANIPOWER" data-sector="Power"
+            <tr data-symbol="ADANIPOWER" data-sector="Power" data-trend="Uptrend"
                 data-rsi="40.63" data-recovery="11.04"
                 data-trough-age="14" data-chg="-0.09">
                 <td class="sym">ADANIPOWER<span class="sector-tag">Power</span></td>
@@ -410,7 +567,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+11.04 pts</td>
             </tr>
-            <tr data-symbol="CGPOWER" data-sector="Industrials"
+            <tr data-symbol="CGPOWER" data-sector="Industrials" data-trend="Uptrend"
                 data-rsi="41.17" data-recovery="17.3"
                 data-trough-age="6" data-chg="-0.05">
                 <td class="sym">CGPOWER<span class="sector-tag">Industrials</span></td>
@@ -425,7 +582,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+17.3 pts</td>
             </tr>
-            <tr data-symbol="SILVERBEES" data-sector="ETF"
+            <tr data-symbol="SILVERBEES" data-sector="ETF" data-trend="Uptrend"
                 data-rsi="44.05" data-recovery="11.01"
                 data-trough-age="15" data-chg="0.13">
                 <td class="sym">SILVERBEES<span class="sector-tag">ETF</span></td>
@@ -440,7 +597,22 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+11.01 pts</td>
             </tr>
-            <tr data-symbol="CANBK" data-sector="Financials"
+            <tr data-symbol="ULTRACEMCO" data-sector="Cement" data-trend="Neutral"
+                data-rsi="45.54" data-recovery="11.09"
+                data-trough-age="6" data-chg="-0.09">
+                <td class="sym">ULTRACEMCO<span class="sector-tag">Cement</span></td>
+                <td>11847.0</td>
+                <td class="neg">-0.09%</td>
+                <td><span class="rsi-badge" style="background:rgb(246,187,32)22;color:rgb(246,187,32);border:1px solid rgb(246,187,32)55">45.54</span></td>
+                <td>34.45</td>
+                <td>6d ago</td>
+                <td>43.86</td>
+                <td>53.6</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,12.2 69.0,10.6" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="10.6" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+11.09 pts</td>
+            </tr>
+            <tr data-symbol="CANBK" data-sector="Financials" data-trend="Uptrend"
                 data-rsi="46.11" data-recovery="9.69"
                 data-trough-age="5" data-chg="0.19">
                 <td class="sym">CANBK<span class="sector-tag">Financials</span></td>
@@ -455,7 +627,67 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+9.69 pts</td>
             </tr>
-            <tr data-symbol="COALINDIA" data-sector="Metals"
+            <tr data-symbol="SHRIRAMFIN" data-sector="Financials" data-trend="Neutral"
+                data-rsi="46.35" data-recovery="6.61"
+                data-trough-age="3" data-chg="0.19">
+                <td class="sym">SHRIRAMFIN<span class="sector-tag">Financials</span></td>
+                <td>1028.8</td>
+                <td class="pos">+0.19%</td>
+                <td><span class="rsi-badge" style="background:rgb(246,189,30)22;color:rgb(246,189,30);border:1px solid rgb(246,189,30)55">46.35</span></td>
+                <td>39.74</td>
+                <td>3d ago</td>
+                <td>45.3</td>
+                <td>51.76</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,12.7 69.0,11.1" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="11.1" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+6.61 pts</td>
+            </tr>
+            <tr data-symbol="GRASIM" data-sector="Cement" data-trend="Neutral"
+                data-rsi="48.54" data-recovery="10.36"
+                data-trough-age="3" data-chg="0.05">
+                <td class="sym">GRASIM<span class="sector-tag">Cement</span></td>
+                <td>3104.8</td>
+                <td class="pos">+0.05%</td>
+                <td><span class="rsi-badge" style="background:rgb(245,194,27)22;color:rgb(245,194,27);border:1px solid rgb(245,194,27)55">48.54</span></td>
+                <td>38.18</td>
+                <td>3d ago</td>
+                <td>45.42</td>
+                <td>49.32</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,9.3 69.0,4.3" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="4.3" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+10.36 pts</td>
+            </tr>
+            <tr data-symbol="CHOLAFIN" data-sector="Financials" data-trend="Downtrend"
+                data-rsi="48.94" data-recovery="5.34"
+                data-trough-age="6" data-chg="-0.04">
+                <td class="sym">CHOLAFIN<span class="sector-tag">Financials</span></td>
+                <td>1773.8</td>
+                <td class="neg">-0.04%</td>
+                <td><span class="rsi-badge" style="background:rgb(245,195,26)22;color:rgb(245,195,26);border:1px solid rgb(245,195,26)55">48.94</span></td>
+                <td>43.6</td>
+                <td>6d ago</td>
+                <td>50.06</td>
+                <td>55.62</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,11.3 69.0,13.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="13.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+5.34 pts</td>
+            </tr>
+            <tr data-symbol="BAJAJFINSV" data-sector="Financials" data-trend="Neutral"
+                data-rsi="50.26" data-recovery="7.21"
+                data-trough-age="2" data-chg="-0.02">
+                <td class="sym">BAJAJFINSV<span class="sector-tag">Financials</span></td>
+                <td>1909.4</td>
+                <td class="neg">-0.02%</td>
+                <td><span class="rsi-badge" style="background:rgb(244,197,25)22;color:rgb(244,197,25);border:1px solid rgb(244,197,25)55">50.26</span></td>
+                <td>43.04</td>
+                <td>2d ago</td>
+                <td>49.35</td>
+                <td>58.25</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,13.5 69.0,12.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="12.5" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+7.21 pts</td>
+            </tr>
+            <tr data-symbol="COALINDIA" data-sector="Metals" data-trend="Uptrend"
                 data-rsi="51.79" data-recovery="33.1"
                 data-trough-age="17" data-chg="-0.01">
                 <td class="sym">COALINDIA<span class="sector-tag">Metals</span></td>
@@ -470,7 +702,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+33.1 pts</td>
             </tr>
-            <tr data-symbol="SIEMENS" data-sector="Industrials"
+            <tr data-symbol="SIEMENS" data-sector="Industrials" data-trend="Uptrend"
                 data-rsi="51.85" data-recovery="14.75"
                 data-trough-age="6" data-chg="-0.02">
                 <td class="sym">SIEMENS<span class="sector-tag">Industrials</span></td>
@@ -485,7 +717,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+14.75 pts</td>
             </tr>
-            <tr data-symbol="GOLDBEES" data-sector="ETF"
+            <tr data-symbol="GOLDBEES" data-sector="ETF" data-trend="Uptrend"
                 data-rsi="52.81" data-recovery="19.07"
                 data-trough-age="13" data-chg="0.09">
                 <td class="sym">GOLDBEES<span class="sector-tag">ETF</span></td>
@@ -500,7 +732,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+19.07 pts</td>
             </tr>
-            <tr data-symbol="DRREDDY" data-sector="Pharma"
+            <tr data-symbol="DRREDDY" data-sector="Pharma" data-trend="Uptrend"
                 data-rsi="53.49" data-recovery="25.68"
                 data-trough-age="18" data-chg="0.42">
                 <td class="sym">DRREDDY<span class="sector-tag">Pharma</span></td>
@@ -515,8 +747,23 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+25.68 pts</td>
             </tr>
+            <tr data-symbol="ASIANPAINT" data-sector="Chemicals" data-trend="Neutral"
+                data-rsi="54.33" data-recovery="6.85"
+                data-trough-age="5" data-chg="0.26">
+                <td class="sym">ASIANPAINT<span class="sector-tag">Chemicals</span></td>
+                <td>2746.2</td>
+                <td class="pos">+0.26%</td>
+                <td><span class="rsi-badge" style="background:rgb(227,198,33)22;color:rgb(227,198,33);border:1px solid rgb(227,198,33)55">54.33</span></td>
+                <td>47.49</td>
+                <td>5d ago</td>
+                <td>51.75</td>
+                <td>59.94</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,14.8 69.0,11.1" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="11.1" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+6.85 pts</td>
+            </tr>
                 <tr class="no-sector-match" style="display:none">
-                    <td colspan="11" class="empty">No signal today in this sector. Click the sector again to clear the filter.</td>
+                    <td colspan="11" class="empty">No signals match the current filter(s). Adjust or clear the sector/trend filter above.</td>
                 </tr>
             </tbody>
         </table>
@@ -524,10 +771,17 @@
     <div class="tf-panel " data-tf="15m" style="display:none">
         
         <div class="ticker-strip" role="group" aria-label="Sector pulse">
-            <div class="ticker-label">Sector pulse &middot; weakest &rarr; strongest RSI
+            <div class="ticker-label">Sector pulse &middot; most signals &rarr; fewest
                 <span class="ticker-hint">&middot; click a sector to filter the table below</span>
             </div>
-            <div class="ticker-grid"><div class="tick-chip" data-sector="Realty" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(247,175,41)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Realty</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(247,175,41)">40.1</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:40.1%;background:rgb(247,175,41)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Infra" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,180,37)55"><div class="tick-row1"><span class="tick-icon">🏗</span><span class="tick-sector">Infra</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,180,37)">42.6</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:42.6%;background:rgb(246,180,37)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="IT" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,181,37)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">IT</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,181,37)">42.8</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:42.8%;background:rgb(246,181,37)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Aviation" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,185,34)55"><div class="tick-row1"><span class="tick-icon">✈</span><span class="tick-sector">Aviation</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,185,34)">44.5</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:44.5%;background:rgb(246,185,34)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Pharma" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,191,29)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Pharma</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,191,29)">47.4</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:47.4%;background:rgb(246,191,29)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Energy" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,196,24)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,196,24)">49.7</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:49.7%;background:rgb(245,196,24)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Other" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(242,197,25)55"><div class="tick-row1"><span class="tick-icon">•</span><span class="tick-sector">Other</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(242,197,25)">50.6</span><span class="tick-count">3 stocks</span></div><div class="tick-bar"><span style="width:50.6%;background:rgb(242,197,25)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Power" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(238,197,27)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Power</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(238,197,27)">51.7</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:51.7%;background:rgb(238,197,27)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="FMCG" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(231,198,31)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">FMCG</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(231,198,31)">53.4</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:53.4%;background:rgb(231,198,31)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Defence" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(229,198,32)55"><div class="tick-row1"><span class="tick-icon">🛡</span><span class="tick-sector">Defence</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(229,198,32)">54.0</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:54.0%;background:rgb(229,198,32)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Financials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(228,198,32)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(228,198,32)">54.1</span><span class="tick-count">23 stocks</span></div><div class="tick-bar"><span style="width:54.1%;background:rgb(228,198,32)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="Cement" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(227,198,33)55"><div class="tick-row1"><span class="tick-icon">🧱</span><span class="tick-sector">Cement</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(227,198,33)">54.4</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:54.4%;background:rgb(227,198,33)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="ETF" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(221,198,36)55"><div class="tick-row1"><span class="tick-icon">📊</span><span class="tick-sector">ETF</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(221,198,36)">55.8</span><span class="tick-count">7 stocks</span></div><div class="tick-bar"><span style="width:55.8%;background:rgb(221,198,36)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Chemicals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(220,198,36)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Chemicals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(220,198,36)">56.1</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:56.1%;background:rgb(220,198,36)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Consumer" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(217,199,38)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Consumer</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(217,199,38)">56.9</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:56.9%;background:rgb(217,199,38)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Retail" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(211,199,40)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Retail</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(211,199,40)">58.2</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:58.2%;background:rgb(211,199,40)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Hospitality" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(210,199,41)55"><div class="tick-row1"><span class="tick-icon">🏨</span><span class="tick-sector">Hospitality</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(210,199,41)">58.4</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:58.4%;background:rgb(210,199,41)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Metals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(205,199,43)55"><div class="tick-row1"><span class="tick-icon">🪙</span><span class="tick-sector">Metals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(205,199,43)">59.6</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:59.6%;background:rgb(205,199,43)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Industrials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(202,199,45)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(202,199,45)">60.3</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:60.3%;background:rgb(202,199,45)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Conglomerate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(200,199,46)55"><div class="tick-row1"><span class="tick-icon">🏢</span><span class="tick-sector">Conglomerate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(200,199,46)">60.8</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:60.8%;background:rgb(200,199,46)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Telecom" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(199,199,46)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Telecom</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(199,199,46)">61.1</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:61.1%;background:rgb(199,199,46)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Auto" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(184,200,53)55"><div class="tick-row1"><span class="tick-icon">🚗</span><span class="tick-sector">Auto</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(184,200,53)">64.6</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:64.6%;background:rgb(184,200,53)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+            <div class="ticker-grid"><div class="tick-chip" data-sector="Financials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(228,198,32)55"><div class="tick-row1"><span class="tick-icon">🏦</span><span class="tick-sector">Financials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(228,198,32)">54.1</span><span class="tick-count">23 stocks</span></div><div class="tick-bar"><span style="width:54.1%;background:rgb(228,198,32)"></span></div><span class="tick-signals">3 signals</span></div><div class="tick-chip" data-sector="IT" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,181,37)55"><div class="tick-row1"><span class="tick-icon">💻</span><span class="tick-sector">IT</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,181,37)">42.8</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:42.8%;background:rgb(246,181,37)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="FMCG" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(231,198,31)55"><div class="tick-row1"><span class="tick-icon">🛒</span><span class="tick-sector">FMCG</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(231,198,31)">53.4</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:53.4%;background:rgb(231,198,31)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Defence" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(229,198,32)55"><div class="tick-row1"><span class="tick-icon">🛡</span><span class="tick-sector">Defence</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(229,198,32)">54.0</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:54.0%;background:rgb(229,198,32)"></span></div><span class="tick-signals">2 signals</span></div><div class="tick-chip" data-sector="Realty" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(247,175,41)55"><div class="tick-row1"><span class="tick-icon">🏠</span><span class="tick-sector">Realty</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(247,175,41)">40.1</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:40.1%;background:rgb(247,175,41)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Pharma" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,191,29)55"><div class="tick-row1"><span class="tick-icon">💊</span><span class="tick-sector">Pharma</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,191,29)">47.4</span><span class="tick-count">8 stocks</span></div><div class="tick-bar"><span style="width:47.4%;background:rgb(246,191,29)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Energy" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(245,196,24)55"><div class="tick-row1"><span class="tick-icon">🛢</span><span class="tick-sector">Energy</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(245,196,24)">49.7</span><span class="tick-count">5 stocks</span></div><div class="tick-bar"><span style="width:49.7%;background:rgb(245,196,24)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Other" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(242,197,25)55"><div class="tick-row1"><span class="tick-icon">•</span><span class="tick-sector">Other</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(242,197,25)">50.6</span><span class="tick-count">3 stocks</span></div><div class="tick-bar"><span style="width:50.6%;background:rgb(242,197,25)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Power" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(238,197,27)55"><div class="tick-row1"><span class="tick-icon">⚡</span><span class="tick-sector">Power</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(238,197,27)">51.7</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:51.7%;background:rgb(238,197,27)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Cement" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(227,198,33)55"><div class="tick-row1"><span class="tick-icon">🧱</span><span class="tick-sector">Cement</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(227,198,33)">54.4</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:54.4%;background:rgb(227,198,33)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="ETF" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(221,198,36)55"><div class="tick-row1"><span class="tick-icon">📊</span><span class="tick-sector">ETF</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(221,198,36)">55.8</span><span class="tick-count">7 stocks</span></div><div class="tick-bar"><span style="width:55.8%;background:rgb(221,198,36)"></span></div><span class="tick-signals">1 signal</span></div><div class="tick-chip" data-sector="Infra" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,180,37)55"><div class="tick-row1"><span class="tick-icon">🏗</span><span class="tick-sector">Infra</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,180,37)">42.6</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:42.6%;background:rgb(246,180,37)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Aviation" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(246,185,34)55"><div class="tick-row1"><span class="tick-icon">✈</span><span class="tick-sector">Aviation</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(246,185,34)">44.5</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:44.5%;background:rgb(246,185,34)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Chemicals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(220,198,36)55"><div class="tick-row1"><span class="tick-icon">🧪</span><span class="tick-sector">Chemicals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(220,198,36)">56.1</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:56.1%;background:rgb(220,198,36)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Consumer" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(217,199,38)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Consumer</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(217,199,38)">56.9</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:56.9%;background:rgb(217,199,38)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Retail" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(211,199,40)55"><div class="tick-row1"><span class="tick-icon">🛍</span><span class="tick-sector">Retail</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(211,199,40)">58.2</span><span class="tick-count">2 stocks</span></div><div class="tick-bar"><span style="width:58.2%;background:rgb(211,199,40)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Hospitality" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(210,199,41)55"><div class="tick-row1"><span class="tick-icon">🏨</span><span class="tick-sector">Hospitality</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(210,199,41)">58.4</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:58.4%;background:rgb(210,199,41)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Metals" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(205,199,43)55"><div class="tick-row1"><span class="tick-icon">🪙</span><span class="tick-sector">Metals</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(205,199,43)">59.6</span><span class="tick-count">6 stocks</span></div><div class="tick-bar"><span style="width:59.6%;background:rgb(205,199,43)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Industrials" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(202,199,45)55"><div class="tick-row1"><span class="tick-icon">⚙</span><span class="tick-sector">Industrials</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(202,199,45)">60.3</span><span class="tick-count">4 stocks</span></div><div class="tick-bar"><span style="width:60.3%;background:rgb(202,199,45)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Conglomerate" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(200,199,46)55"><div class="tick-row1"><span class="tick-icon">🏢</span><span class="tick-sector">Conglomerate</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(200,199,46)">60.8</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:60.8%;background:rgb(200,199,46)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Telecom" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(199,199,46)55"><div class="tick-row1"><span class="tick-icon">📡</span><span class="tick-sector">Telecom</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(199,199,46)">61.1</span><span class="tick-count">1 stocks</span></div><div class="tick-bar"><span style="width:61.1%;background:rgb(199,199,46)"></span></div><span class="tick-signals muted">0 signals</span></div><div class="tick-chip" data-sector="Auto" tabindex="0" role="button" aria-pressed="false" style="border-color:rgb(184,200,53)55"><div class="tick-row1"><span class="tick-icon">🚗</span><span class="tick-sector">Auto</span></div><div class="tick-row2"><span class="tick-rsi" style="color:rgb(184,200,53)">64.6</span><span class="tick-count">10 stocks</span></div><div class="tick-bar"><span style="width:64.6%;background:rgb(184,200,53)"></span></div><span class="tick-signals muted">0 signals</span></div></div>
+        </div>
+        
+        <div class="trend-tabs" role="tablist" aria-label="Trend filter">
+            <button class="trend-tab active" data-trend="all" role="tab" aria-selected="true">All <span class="trend-tab-count">16</span></button>
+            <button class="trend-tab" data-trend="Uptrend" role="tab" aria-selected="false">Uptrend <span class="trend-tab-count">10</span></button>
+            <button class="trend-tab" data-trend="Downtrend" role="tab" aria-selected="false">Downtrend <span class="trend-tab-count">4</span></button>
+            <button class="trend-tab" data-trend="Neutral" role="tab" aria-selected="false">Neutral <span class="trend-tab-count">2</span></button>
         </div>
         <table>
             <thead>
@@ -546,7 +800,82 @@
                 </tr>
             </thead>
             <tbody>
-            <tr data-symbol="SHREECEM" data-sector="Cement"
+            <tr data-symbol="ITBEES" data-sector="ETF" data-trend="Downtrend"
+                data-rsi="38.93" data-recovery="5.86"
+                data-trough-age="3" data-chg="0.06">
+                <td class="sym">ITBEES<span class="sector-tag">ETF</span></td>
+                <td>34.64</td>
+                <td class="pos">+0.06%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,172,43)22;color:rgb(247,172,43);border:1px solid rgb(247,172,43)55">38.93</span></td>
+                <td>33.07</td>
+                <td>3d ago</td>
+                <td>43.08</td>
+                <td>55.86</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,13.1 69.0,16.4" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="16.4" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+5.86 pts</td>
+            </tr>
+            <tr data-symbol="TCS" data-sector="IT" data-trend="Downtrend"
+                data-rsi="39.54" data-recovery="7.77"
+                data-trough-age="3" data-chg="0.17">
+                <td class="sym">TCS<span class="sector-tag">IT</span></td>
+                <td>2434.0</td>
+                <td class="pos">+0.17%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,173,42)22;color:rgb(247,173,42);border:1px solid rgb(247,173,42)55">39.54</span></td>
+                <td>31.77</td>
+                <td>3d ago</td>
+                <td>40.23</td>
+                <td>48.81</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,12.1 69.0,12.8" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="12.8" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+7.77 pts</td>
+            </tr>
+            <tr data-symbol="GAIL" data-sector="Energy" data-trend="Neutral"
+                data-rsi="39.69" data-recovery="11.7"
+                data-trough-age="4" data-chg="0.04">
+                <td class="sym">GAIL<span class="sector-tag">Energy</span></td>
+                <td>173.75</td>
+                <td class="pos">+0.04%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,174,42)22;color:rgb(247,174,42);border:1px solid rgb(247,174,42)55">39.69</span></td>
+                <td>28.0</td>
+                <td>4d ago</td>
+                <td>35.25</td>
+                <td>41.48</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,11.3 69.0,5.4" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="5.4" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+11.7 pts</td>
+            </tr>
+            <tr data-symbol="INFY" data-sector="IT" data-trend="Downtrend"
+                data-rsi="41.13" data-recovery="7.32"
+                data-trough-age="3" data-chg="0.21">
+                <td class="sym">INFY<span class="sector-tag">IT</span></td>
+                <td>1156.7</td>
+                <td class="pos">+0.21%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,177,40)22;color:rgb(247,177,40);border:1px solid rgb(247,177,40)55">41.13</span></td>
+                <td>33.81</td>
+                <td>3d ago</td>
+                <td>44.99</td>
+                <td>55.86</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,11.9 69.0,15.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="15.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+7.32 pts</td>
+            </tr>
+            <tr data-symbol="LODHA" data-sector="Realty" data-trend="Neutral"
+                data-rsi="41.97" data-recovery="7.25"
+                data-trough-age="2" data-chg="0.19">
+                <td class="sym">LODHA<span class="sector-tag">Realty</span></td>
+                <td>1289.55</td>
+                <td class="pos">+0.19%</td>
+                <td><span class="rsi-badge" style="background:rgb(247,179,38)22;color:rgb(247,179,38);border:1px solid rgb(247,179,38)55">41.97</span></td>
+                <td>34.71</td>
+                <td>2d ago</td>
+                <td>38.77</td>
+                <td>46.95</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,15.0 69.0,10.3" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="10.3" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-neutral">Neutral</span></td>
+                <td>+7.25 pts</td>
+            </tr>
+            <tr data-symbol="SHREECEM" data-sector="Cement" data-trend="Uptrend"
                 data-rsi="45.24" data-recovery="24.43"
                 data-trough-age="13" data-chg="-0.06">
                 <td class="sym">SHREECEM<span class="sector-tag">Cement</span></td>
@@ -561,7 +890,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+24.43 pts</td>
             </tr>
-            <tr data-symbol="BEL" data-sector="Defence"
+            <tr data-symbol="BEL" data-sector="Defence" data-trend="Uptrend"
                 data-rsi="46.41" data-recovery="7.53"
                 data-trough-age="5" data-chg="0.06">
                 <td class="sym">BEL<span class="sector-tag">Defence</span></td>
@@ -576,7 +905,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+7.53 pts</td>
             </tr>
-            <tr data-symbol="CHOLAFIN" data-sector="Financials"
+            <tr data-symbol="CHOLAFIN" data-sector="Financials" data-trend="Uptrend"
                 data-rsi="49.2" data-recovery="17.11"
                 data-trough-age="19" data-chg="-0.04">
                 <td class="sym">CHOLAFIN<span class="sector-tag">Financials</span></td>
@@ -591,7 +920,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+17.11 pts</td>
             </tr>
-            <tr data-symbol="ITC" data-sector="FMCG"
+            <tr data-symbol="ITC" data-sector="FMCG" data-trend="Uptrend"
                 data-rsi="49.5" data-recovery="19.89"
                 data-trough-age="3" data-chg="0.19">
                 <td class="sym">ITC<span class="sector-tag">FMCG</span></td>
@@ -606,7 +935,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+19.89 pts</td>
             </tr>
-            <tr data-symbol="BRITANNIA" data-sector="FMCG"
+            <tr data-symbol="BRITANNIA" data-sector="FMCG" data-trend="Uptrend"
                 data-rsi="51.71" data-recovery="9.0"
                 data-trough-age="4" data-chg="0.12">
                 <td class="sym">BRITANNIA<span class="sector-tag">FMCG</span></td>
@@ -621,7 +950,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+9.0 pts</td>
             </tr>
-            <tr data-symbol="SHRIRAMFIN" data-sector="Financials"
+            <tr data-symbol="SHRIRAMFIN" data-sector="Financials" data-trend="Uptrend"
                 data-rsi="52.25" data-recovery="29.41"
                 data-trough-age="19" data-chg="0.19">
                 <td class="sym">SHRIRAMFIN<span class="sector-tag">Financials</span></td>
@@ -636,7 +965,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+29.41 pts</td>
             </tr>
-            <tr data-symbol="SOLARINDS" data-sector="Defence"
+            <tr data-symbol="SOLARINDS" data-sector="Defence" data-trend="Uptrend"
                 data-rsi="52.56" data-recovery="17.09"
                 data-trough-age="19" data-chg="-0.04">
                 <td class="sym">SOLARINDS<span class="sector-tag">Defence</span></td>
@@ -651,7 +980,22 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+17.09 pts</td>
             </tr>
-            <tr data-symbol="BAJAJFINSV" data-sector="Financials"
+            <tr data-symbol="SUNPHARMA" data-sector="Pharma" data-trend="Downtrend"
+                data-rsi="52.58" data-recovery="5.17"
+                data-trough-age="1" data-chg="0.2">
+                <td class="sym">SUNPHARMA<span class="sector-tag">Pharma</span></td>
+                <td>2005.0</td>
+                <td class="pos">+0.20%</td>
+                <td><span class="rsi-badge" style="background:rgb(234,198,29)22;color:rgb(234,198,29);border:1px solid rgb(234,198,29)55">52.58</span></td>
+                <td>47.41</td>
+                <td>1d ago</td>
+                <td>55.65</td>
+                <td>63.07</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,11.5 69.0,15.1" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="15.1" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-down">Downtrend</span></td>
+                <td>+5.17 pts</td>
+            </tr>
+            <tr data-symbol="BAJAJFINSV" data-sector="Financials" data-trend="Uptrend"
                 data-rsi="53.2" data-recovery="23.07"
                 data-trough-age="19" data-chg="-0.02">
                 <td class="sym">BAJAJFINSV<span class="sector-tag">Financials</span></td>
@@ -666,7 +1010,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+23.07 pts</td>
             </tr>
-            <tr data-symbol="ENRIN" data-sector="Other"
+            <tr data-symbol="ENRIN" data-sector="Other" data-trend="Uptrend"
                 data-rsi="53.49" data-recovery="28.34"
                 data-trough-age="19" data-chg="0.16">
                 <td class="sym">ENRIN<span class="sector-tag">Other</span></td>
@@ -681,7 +1025,7 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+28.34 pts</td>
             </tr>
-            <tr data-symbol="TATAPOWER" data-sector="Power"
+            <tr data-symbol="TATAPOWER" data-sector="Power" data-trend="Uptrend"
                 data-rsi="54.39" data-recovery="7.67"
                 data-trough-age="4" data-chg="0.0">
                 <td class="sym">TATAPOWER<span class="sector-tag">Power</span></td>
@@ -697,7 +1041,7 @@
                 <td>+7.67 pts</td>
             </tr>
                 <tr class="no-sector-match" style="display:none">
-                    <td colspan="11" class="empty">No signal today in this sector. Click the sector again to clear the filter.</td>
+                    <td colspan="11" class="empty">No signals match the current filter(s). Adjust or clear the sector/trend filter above.</td>
                 </tr>
             </tbody>
         </table>
@@ -705,10 +1049,11 @@
 </div>
 <script>
     const TF_ORDER = ['1d', '1h', '15m'];
-    const TF_META = {"1d":{"label":"Daily","count":7},"1h":{"label":"1 Hour","count":11},"15m":{"label":"15 Min","count":10}};
+    const TF_META = {"1d":{"label":"Daily","count":14},"1h":{"label":"1 Hour","count":18},"15m":{"label":"15 Min","count":16}};
     let currentTF = TF_ORDER[0];
     const panelSort = {};
     const panelActiveSector = {};
+    const panelActiveTrend = {};
 
     function panelEls(tf) {
         const panel = document.querySelector('.tf-panel[data-tf="' + tf + '"]');
@@ -718,6 +1063,7 @@
         const noSectorMatchRow = panel.querySelector('.no-sector-match');
         return { panel, table, tbody, sectorGrid, noSectorMatchRow };
     }
+
 
     function cellValue(row, key, type) {
         const map = {
@@ -753,23 +1099,21 @@
         rows.forEach(r => tbody.appendChild(r));
     }
 
-    // ---- Sector-pulse click-to-filter ----
-    function applySectorFilter(tf, sector) {
+    // ---- Combined sector + trend filtering ----
+    function applyFilters(tf) {
         const { noSectorMatchRow } = panelEls(tf);
+        const sector = panelActiveSector[tf];
+        const trend = panelActiveTrend[tf];
         const rows = dataRows(tf);
         let visible = 0;
         rows.forEach(r => {
-            const match = r.dataset.sector === sector;
+            const sectorOk = !sector || r.dataset.sector === sector;
+            const trendOk = !trend || trend === 'all' || r.dataset.trend === trend;
+            const match = sectorOk && trendOk;
             r.style.display = match ? '' : 'none';
             if (match) visible++;
         });
         if (noSectorMatchRow) noSectorMatchRow.style.display = (visible === 0) ? '' : 'none';
-    }
-
-    function clearSectorFilter(tf) {
-        dataRows(tf).forEach(r => { r.style.display = ''; });
-        const { noSectorMatchRow } = panelEls(tf);
-        if (noSectorMatchRow) noSectorMatchRow.style.display = 'none';
     }
 
     function setActiveSector(tf, sector, chipEl) {
@@ -781,12 +1125,26 @@
             c.classList.toggle('active', isActive);
             c.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
-        if (sector) applySectorFilter(tf, sector); else clearSectorFilter(tf);
+        applyFilters(tf);
+    }
+
+    function setActiveTrend(tf, trend, btnEl) {
+        panelActiveTrend[tf] = trend === 'all' ? null : trend;
+        const panel = document.querySelector('.tf-panel[data-tf="' + tf + '"]');
+        const tabs = panel.querySelectorAll('.trend-tab');
+        tabs.forEach(b => {
+            const isActive = b === btnEl;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        applyFilters(tf);
     }
 
     function initPanel(tf) {
-        const { table, sectorGrid } = panelEls(tf);
+        const { table, sectorGrid, panel } = panelEls(tf);
         panelSort[tf] = { key: null, dir: 1 };
+        panelActiveSector[tf] = null;
+        panelActiveTrend[tf] = null;
         table.querySelectorAll('th[data-key]').forEach(th => {
             th.addEventListener('click', () => {
                 const key = th.dataset.key, type = th.dataset.type;
@@ -812,6 +1170,10 @@
                 });
             });
         }
+        const trendTabs = panel.querySelectorAll('.trend-tab');
+        trendTabs.forEach(btn => {
+            btn.addEventListener('click', () => setActiveTrend(tf, btn.dataset.trend, btn));
+        });
     }
     TF_ORDER.forEach(initPanel);
 
@@ -823,7 +1185,7 @@
     function updateSubtitle(tf) {
         const meta = TF_META[tf];
         document.getElementById('tfSubtitle').innerHTML =
-            'Generated 2026-07-30 14:52:05 &middot; <span class="count">' + meta.count + '</span> stock(s) matched (' + meta.label + ')';
+            'Generated 2026-07-30 20:15:26 &middot; <span class="count">' + meta.count + '</span> stock(s) matched (' + meta.label + ')';
         const tfChip = document.querySelector('.crit-chip.tf');
         if (tfChip) tfChip.textContent = meta.label;
     }
