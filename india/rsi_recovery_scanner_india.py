@@ -24,13 +24,19 @@ Signal criteria (all must hold):
      dip) while still rejecting a genuine failed bounce / chop (Adani Power:
      spiked to ~53.73, then fell back to ~48.66 before today — a ~5pt
      rollover, well outside tolerance).
-  6. Current RSI is back ABOVE both its own fast RSI_SMA_PERIOD moving
-     average AND the slower RSI_LONG_SMA_PERIOD (~1 month) average. This
-     rejects a stock that has a real trough+bounce but the bounce is a
-     shallow one off a LOWER low within a still-intact downtrend (e.g. DMart:
-     RSI ~41 vs its own average ~55) — the trough/decline/recovery checks
-     alone can pass, but momentum hasn't actually turned yet on either
-     timeframe.
+Checks 1-5 above are MANDATORY — all must pass for a stock to appear in the
+report. Check 6 below is OPTIONAL / informational only as of this version:
+
+  6. (optional) Current RSI back above its own fast RSI_SMA_PERIOD moving
+     average (6a) AND the slower RSI_LONG_SMA_PERIOD ~1 month average (6b).
+     This would confirm the reversal also holds up against the stock's own
+     short/intermediate trend, not just against the raw trough number (e.g.
+     DMart: RSI ~41 vs its own average ~55 — trough+bounce is real, but
+     momentum hasn't turned on either timeframe yet). Stocks that pass 1-5
+     but fail 6a/6b now still show up in the report — the "Trend" column
+     (Uptrend / Downtrend / Neutral) tells you whether 6a/6b are holding, so
+     you can see fresh-but-unconfirmed bounces (like HDFC Bank) instead of
+     them being silently dropped.
 
 Data source: Yahoo Finance via yfinance (tickers already carry the .NS suffix
 in the watchlist below). No LLM. No external API key needed. Pure
@@ -246,7 +252,20 @@ def check_band_recovery(rsi: pd.Series, rsi_sma: pd.Series, rsi_long_sma: pd.Ser
     """
     min_len = TROUGH_WINDOW + PRIOR_DECLINE_BARS + RSI_LONG_SMA_PERIOD + 1
     checks = diagnose_checks(rsi, rsi_sma, rsi_long_sma, min_len)
-    if checks is None or not all(c[1] for c in checks):
+    if checks is None:
+        return None
+
+    # Checks 1-5 are MANDATORY (real trough, real decline into it, real
+    # recovery off it, no rollover since). Checks 6a/6b (RSI back above its
+    # own fast/slow SMA) are informational only from here on -- a stock can
+    # still signal without them, but the HTML "Trend" chip (Uptrend /
+    # Downtrend / Neutral, driven by 6a+6b) shows whether momentum has
+    # actually turned yet or the bounce is still happening under a falling
+    # longer-term RSI trend.
+    MANDATORY_KEYS = {"current_rsi", "trough_rsi", "decline_into_trough",
+                       "recovery_points", "giveback"}
+    mandatory_checks = [c for c in checks if c[4] in MANDATORY_KEYS]
+    if not all(c[1] for c in mandatory_checks):
         return None
 
     vals = {c[4]: c[3] for c in checks}
@@ -458,6 +477,7 @@ def _render_panel_html(tf_key: str, results: list[dict], all_rsi: dict) -> tuple
     active one visible on first paint (CSS/JS handles the rest)."""
     rows = ""
     signal_symbols = {r["symbol"] for r in results} if results else set()
+    trend_counts = {"Uptrend": 0, "Downtrend": 0, "Neutral": 0}
 
     if results:
         for r in results:
@@ -465,10 +485,11 @@ def _render_panel_html(tf_key: str, results: list[dict], all_rsi: dict) -> tuple
             chg_class = "pos" if r["pct_chg"] >= 0 else "neg"
             rsi_color = _rsi_color(r["current_rsi"])
             trend_label, trend_class = _rsi_trend_chip(r["current_rsi"], r["rsi_sma"], r["rsi_long_sma"])
+            trend_counts[trend_label] = trend_counts.get(trend_label, 0) + 1
             spark = _sparkline_svg([r["trough_rsi"], r["rsi_long_sma"], r["rsi_sma"], r["current_rsi"]])
 
             rows += f"""
-            <tr data-symbol="{r['symbol']}" data-sector="{sector}"
+            <tr data-symbol="{r['symbol']}" data-sector="{sector}" data-trend="{trend_label}"
                 data-rsi="{r['current_rsi']}" data-recovery="{r['recovery_points']}"
                 data-trough-age="{r['bars_since_trough']}" data-chg="{r['pct_chg']}">
                 <td class="sym">{r['symbol']}<span class="sector-tag">{sector}</span></td>
@@ -498,7 +519,10 @@ def _render_panel_html(tf_key: str, results: list[dict], all_rsi: dict) -> tuple
 
     ticker_html = ""
     if sector_rsi:
-        sorted_sectors = sorted(sector_rsi.items(), key=lambda kv: sum(kv[1]) / len(kv[1]))
+        sorted_sectors = sorted(
+            sector_rsi.items(),
+            key=lambda kv: (-sector_signals.get(kv[0], 0), sum(kv[1]) / len(kv[1]))
+        )
 
         def _chip(sector, vals):
             avg = sum(vals) / len(vals)
@@ -524,15 +548,25 @@ def _render_panel_html(tf_key: str, results: list[dict], all_rsi: dict) -> tuple
         chips = "".join(_chip(s, v) for s, v in sorted_sectors)
         ticker_html = f"""
         <div class="ticker-strip" role="group" aria-label="Sector pulse">
-            <div class="ticker-label">Sector pulse &middot; weakest &rarr; strongest RSI
+            <div class="ticker-label">Sector pulse &middot; most signals &rarr; fewest
                 <span class="ticker-hint">&middot; click a sector to filter the table below</span>
             </div>
             <div class="ticker-grid">{chips}</div>
         </div>"""
 
+    total_signals = len(results)
+    trend_tabs_html = f"""
+        <div class="trend-tabs" role="tablist" aria-label="Trend filter">
+            <button class="trend-tab active" data-trend="all" role="tab" aria-selected="true">All <span class="trend-tab-count">{total_signals}</span></button>
+            <button class="trend-tab" data-trend="Uptrend" role="tab" aria-selected="false">Uptrend <span class="trend-tab-count">{trend_counts['Uptrend']}</span></button>
+            <button class="trend-tab" data-trend="Downtrend" role="tab" aria-selected="false">Downtrend <span class="trend-tab-count">{trend_counts['Downtrend']}</span></button>
+            <button class="trend-tab" data-trend="Neutral" role="tab" aria-selected="false">Neutral <span class="trend-tab-count">{trend_counts['Neutral']}</span></button>
+        </div>"""
+
     panel_html = f"""
     <div class="tf-panel" data-tf="{tf_key}">
         {ticker_html}
+        {trend_tabs_html}
         <table>
             <thead>
                 <tr>
@@ -551,7 +585,7 @@ def _render_panel_html(tf_key: str, results: list[dict], all_rsi: dict) -> tuple
             </thead>
             <tbody>{rows}
                 <tr class="no-sector-match" style="display:none">
-                    <td colspan="11" class="empty">No signal today in this sector. Click the sector again to clear the filter.</td>
+                    <td colspan="11" class="empty">No signals match the current filter(s). Adjust or clear the sector/trend filter above.</td>
                 </tr>
             </tbody>
         </table>
@@ -738,6 +772,29 @@ def build_html(results_by_tf: dict[str, list], all_rsi_by_tf: dict[str, dict]) -
     .chip-up {{ background: rgba(38,208,124,0.14); color: var(--pos); }}
     .chip-down {{ background: rgba(255,84,112,0.14); color: var(--neg); }}
     .chip-neutral {{ background: rgba(139,147,167,0.14); color: var(--muted); }}
+
+    /* -- Trend filter tabs (All / Uptrend / Downtrend / Neutral) -- */
+    .trend-tabs {{
+        display: flex; gap: 8px; flex-wrap: wrap;
+    }}
+    .trend-tab {{
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+        border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+        cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }}
+    .trend-tab:hover {{ border-color: var(--accent); color: var(--text); }}
+    .trend-tab-count {{
+        font-size: 10px; font-weight: 700; color: var(--muted);
+        background: rgba(139,147,167,0.14); border-radius: 999px; padding: 1px 7px;
+    }}
+    .trend-tab.active {{ color: var(--text); border-color: var(--accent); background: rgba(0,229,199,0.08); }}
+    .trend-tab.active .trend-tab-count {{ color: var(--accent); background: rgba(0,229,199,0.14); }}
+    .trend-tab[data-trend="Uptrend"].active {{ border-color: var(--pos); background: rgba(38,208,124,0.10); }}
+    .trend-tab[data-trend="Uptrend"].active .trend-tab-count {{ color: var(--pos); background: rgba(38,208,124,0.18); }}
+    .trend-tab[data-trend="Downtrend"].active {{ border-color: var(--neg); background: rgba(255,84,112,0.10); }}
+    .trend-tab[data-trend="Downtrend"].active .trend-tab-count {{ color: var(--neg); background: rgba(255,84,112,0.18); }}
+    .trend-tab[data-trend="Neutral"].active {{ border-color: var(--muted); background: rgba(139,147,167,0.10); }}
     .spark {{ display: block; }}
     .empty {{ text-align: center; color: var(--muted); padding: 32px; }}
 </style>
@@ -784,6 +841,7 @@ def build_html(results_by_tf: dict[str, list], all_rsi_by_tf: dict[str, dict]) -
     let currentTF = TF_ORDER[0];
     const panelSort = {{}};
     const panelActiveSector = {{}};
+    const panelActiveTrend = {{}};
 
     function panelEls(tf) {{
         const panel = document.querySelector('.tf-panel[data-tf="' + tf + '"]');
@@ -793,6 +851,7 @@ def build_html(results_by_tf: dict[str, list], all_rsi_by_tf: dict[str, dict]) -
         const noSectorMatchRow = panel.querySelector('.no-sector-match');
         return {{ panel, table, tbody, sectorGrid, noSectorMatchRow }};
     }}
+
 
     function cellValue(row, key, type) {{
         const map = {{
@@ -828,23 +887,21 @@ def build_html(results_by_tf: dict[str, list], all_rsi_by_tf: dict[str, dict]) -
         rows.forEach(r => tbody.appendChild(r));
     }}
 
-    // ---- Sector-pulse click-to-filter ----
-    function applySectorFilter(tf, sector) {{
+    // ---- Combined sector + trend filtering ----
+    function applyFilters(tf) {{
         const {{ noSectorMatchRow }} = panelEls(tf);
+        const sector = panelActiveSector[tf];
+        const trend = panelActiveTrend[tf];
         const rows = dataRows(tf);
         let visible = 0;
         rows.forEach(r => {{
-            const match = r.dataset.sector === sector;
+            const sectorOk = !sector || r.dataset.sector === sector;
+            const trendOk = !trend || trend === 'all' || r.dataset.trend === trend;
+            const match = sectorOk && trendOk;
             r.style.display = match ? '' : 'none';
             if (match) visible++;
         }});
         if (noSectorMatchRow) noSectorMatchRow.style.display = (visible === 0) ? '' : 'none';
-    }}
-
-    function clearSectorFilter(tf) {{
-        dataRows(tf).forEach(r => {{ r.style.display = ''; }});
-        const {{ noSectorMatchRow }} = panelEls(tf);
-        if (noSectorMatchRow) noSectorMatchRow.style.display = 'none';
     }}
 
     function setActiveSector(tf, sector, chipEl) {{
@@ -856,12 +913,26 @@ def build_html(results_by_tf: dict[str, list], all_rsi_by_tf: dict[str, dict]) -
             c.classList.toggle('active', isActive);
             c.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         }});
-        if (sector) applySectorFilter(tf, sector); else clearSectorFilter(tf);
+        applyFilters(tf);
+    }}
+
+    function setActiveTrend(tf, trend, btnEl) {{
+        panelActiveTrend[tf] = trend === 'all' ? null : trend;
+        const panel = document.querySelector('.tf-panel[data-tf="' + tf + '"]');
+        const tabs = panel.querySelectorAll('.trend-tab');
+        tabs.forEach(b => {{
+            const isActive = b === btnEl;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        }});
+        applyFilters(tf);
     }}
 
     function initPanel(tf) {{
-        const {{ table, sectorGrid }} = panelEls(tf);
+        const {{ table, sectorGrid, panel }} = panelEls(tf);
         panelSort[tf] = {{ key: null, dir: 1 }};
+        panelActiveSector[tf] = null;
+        panelActiveTrend[tf] = null;
         table.querySelectorAll('th[data-key]').forEach(th => {{
             th.addEventListener('click', () => {{
                 const key = th.dataset.key, type = th.dataset.type;
@@ -887,6 +958,10 @@ def build_html(results_by_tf: dict[str, list], all_rsi_by_tf: dict[str, dict]) -
                 }});
             }});
         }}
+        const trendTabs = panel.querySelectorAll('.trend-tab');
+        trendTabs.forEach(btn => {{
+            btn.addEventListener('click', () => setActiveTrend(tf, btn.dataset.trend, btn));
+        }});
     }}
     TF_ORDER.forEach(initPanel);
 
@@ -993,22 +1068,32 @@ def debug_ticker(ticker: str, timeframe: str = DEFAULT_TIMEFRAME):
         print(f"Not enough history: need >= {min_len} bars, have {len(rsi)}.")
         return
 
-    all_pass = True
+    MANDATORY_KEYS = {"current_rsi", "trough_rsi", "decline_into_trough",
+                       "recovery_points", "giveback"}
+    all_mandatory_pass = True
     for name, passed, detail, _, key in checks:
         if key == "bars_since_trough":
             continue  # internal-only, already reflected in check 2's detail line
         status = "PASS" if passed else "FAIL"
-        print(f"  [{status}] {name}\n         {detail}")
-        if not passed:
-            all_pass = False
+        tag = "" if key in MANDATORY_KEYS else "  (optional -- informational only)"
+        print(f"  [{status}] {name}{tag}\n         {detail}")
+        if key in MANDATORY_KEYS and not passed:
+            all_mandatory_pass = False
 
     print()
-    if all_pass:
-        print("SIGNAL: all checks passed.")
+    if all_mandatory_pass:
+        opt_failed = [name for name, passed, _, _, key in checks
+                      if not passed and key not in MANDATORY_KEYS and key != "bars_since_trough"]
+        if opt_failed:
+            print(f"SIGNAL: all mandatory checks (1-5) passed. "
+                  f"Optional 6a/6b not yet confirmed -- {', '.join(opt_failed)}. "
+                  f"Will show in HTML with a Downtrend/Neutral trend chip.")
+        else:
+            print("SIGNAL: all checks (1-5 mandatory + 6a/6b optional) passed.")
     else:
         failed = [name for name, passed, _, _, key in checks
-                  if not passed and key != "bars_since_trough"]
-        print(f"NO SIGNAL: failed on {len(failed)} check(s) — {', '.join(failed)}")
+                  if not passed and key in MANDATORY_KEYS]
+        print(f"NO SIGNAL: failed on mandatory check(s) -- {', '.join(failed)}")
 
 
 def _parse_timeframe(argv: list) -> str:
