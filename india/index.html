@@ -182,7 +182,7 @@
     <div class="hdr-top">
         <div>
             <h1>RSI Recovery Scan — All Timeframes &middot; 30&ndash;55 band, down &rarr; up only</h1>
-            <div class="sub" id="tfSubtitle">Generated 2026-08-01 14:08:44 &middot; <span class="count">15</span> stock(s) matched (Daily)</div>
+            <div class="sub" id="tfSubtitle">Generated 2026-08-02 14:10:35 &middot; <span class="count">15</span> stock(s) matched (Daily)</div>
         </div>
         <div class="criteria-chips" title="RSI(14) formed a real trough within 20 candles (declining >= 5.0 pts over 8 bars), recovered >= 5.0 pts off that trough, sits within 1.5 pts of its post-trough high, and is back above both the 9- and 21-period RSI averages.">
             <span class="crit-chip tf">Daily</span>
@@ -439,21 +439,6 @@
                 <td><span class="chip chip-up">Uptrend</span></td>
                 <td>+23.28 pts</td>
             </tr>
-            <tr data-symbol="KOTAKBANK" data-sector="Financials" data-trend="Uptrend"
-                data-rsi="53.09" data-recovery="20.24"
-                data-trough-age="16" data-chg="-0.21">
-                <td class="sym">KOTAKBANK<span class="sector-tag">Financials</span></td>
-                <td>389.4</td>
-                <td class="neg">-0.21%</td>
-                <td><span class="rsi-badge" style="background:rgb(232,198,30)22;color:rgb(232,198,30);border:1px solid rgb(232,198,30)55">53.09</span></td>
-                <td>32.84</td>
-                <td>16d ago</td>
-                <td>49.48</td>
-                <td>45.93</td>
-                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,9.4 47.0,6.2 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
-                <td><span class="chip chip-up">Uptrend</span></td>
-                <td>+20.24 pts</td>
-            </tr>
             <tr data-symbol="ZYDUSLIFE" data-sector="Pharma" data-trend="Neutral"
                 data-rsi="53.19" data-recovery="10.32"
                 data-trough-age="3" data-chg="1.05">
@@ -468,6 +453,21 @@
                 <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,3.0 47.0,13.0 69.0,8.7" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="8.7" r="2" fill="var(--accent)"/></svg></td>
                 <td><span class="chip chip-neutral">Neutral</span></td>
                 <td>+10.32 pts</td>
+            </tr>
+            <tr data-symbol="KOTAKBANK" data-sector="Financials" data-trend="Uptrend"
+                data-rsi="53.91" data-recovery="21.06"
+                data-trough-age="17" data-chg="0.23">
+                <td class="sym">KOTAKBANK<span class="sector-tag">Financials</span></td>
+                <td>390.3</td>
+                <td class="pos">+0.23%</td>
+                <td><span class="rsi-badge" style="background:rgb(229,198,32)22;color:rgb(229,198,32);border:1px solid rgb(229,198,32)55">53.91</span></td>
+                <td>32.84</td>
+                <td>17d ago</td>
+                <td>50.28</td>
+                <td>45.95</td>
+                <td><svg class="spark" viewBox="0 0 72 24" width="72" height="24"><polyline points="3.0,21.0 25.0,9.8 47.0,6.1 69.0,3.0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="69.0" cy="3.0" r="2" fill="var(--accent)"/></svg></td>
+                <td><span class="chip chip-up">Uptrend</span></td>
+                <td>+21.06 pts</td>
             </tr>
                 <tr class="no-sector-match" style="display:none">
                     <td colspan="11" class="empty">No signals match the current filter(s). Adjust or clear the sector/trend filter above.</td>
@@ -960,7 +960,7 @@
     function updateSubtitle(tf) {
         const meta = TF_META[tf];
         document.getElementById('tfSubtitle').innerHTML =
-            'Generated 2026-08-01 14:08:44 &middot; <span class="count">' + meta.count + '</span> stock(s) matched (' + meta.label + ')';
+            'Generated 2026-08-02 14:10:35 &middot; <span class="count">' + meta.count + '</span> stock(s) matched (' + meta.label + ')';
         const tfChip = document.querySelector('.crit-chip.tf');
         if (tfChip) tfChip.textContent = meta.label;
     }
