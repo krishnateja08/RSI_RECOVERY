@@ -11,7 +11,7 @@ on:
   workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab
 
 permissions:
-  contents: write   # needed so the workflow can commit all/index.html back to the repo
+  contents: write   # needed so the workflow can commit allstocks/index.html back to the repo
 
 jobs:
   scan:
@@ -27,25 +27,25 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cat > all/requirements.txt << 'EOF'
+          cat > allstocks/requirements.txt << 'EOF'
           yfinance
           pandas
           numpy
           lxml
           EOF
-          pip install -r all/requirements.txt
+          pip install -r allstocks/requirements.txt
 
       - name: Run combined All Stocks scanner (India + USA)
-        working-directory: all
-        run: rsi_recovery_allstocks.py
+        working-directory: allstocks
+        run: python rsi_recovery_allstocks.py
 
       - name: Prepare report for GitHub Pages
-        run: cp all/rsi_recovery_scanner.html all/index.html
+        run: cp allstocks/rsi_recovery_scanner.html allstocks/index.html
 
       - name: Commit and push updated report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add all/index.html
+          git add allstocks/index.html
           git commit -m "Update All Stocks RSI recovery scan $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
           git push
