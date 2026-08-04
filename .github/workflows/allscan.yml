@@ -37,7 +37,7 @@ jobs:
 
       - name: Run combined All Stocks scanner (India + USA)
         working-directory: all
-        run: python rsi_recovery_scanner_india.py
+        run: rsi_recovery_allstocks.py
 
       - name: Prepare report for GitHub Pages
         run: cp all/rsi_recovery_scanner.html all/index.html
