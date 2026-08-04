@@ -1,0 +1,51 @@
+name: All Stocks RSI Recovery Scan
+
+on:
+  schedule:
+    # 7:00 PM IST daily (IST = UTC+5:30, no DST)
+    - cron: '30 13 * * *'
+    # 7:00 PM EST daily (EST = fixed UTC-5; during US daylight saving this
+    # fires at 8:00 PM local New York clock time instead of 7:00 PM, since
+    # GitHub Actions cron does not observe DST)
+    - cron: '0 0 * * *'
+  workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab
+
+permissions:
+  contents: write   # needed so the workflow can commit all/index.html back to the repo
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cat > all/requirements.txt << 'EOF'
+          yfinance
+          pandas
+          numpy
+          lxml
+          EOF
+          pip install -r all/requirements.txt
+
+      - name: Run combined All Stocks scanner (India + USA)
+        working-directory: all
+        run: python rsi_recovery_scanner_india.py
+
+      - name: Prepare report for GitHub Pages
+        run: cp all/rsi_recovery_scanner.html all/index.html
+
+      - name: Commit and push updated report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add all/index.html
+          git commit -m "Update All Stocks RSI recovery scan $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
+          git push
