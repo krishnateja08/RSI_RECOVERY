@@ -182,7 +182,7 @@
     <div class="hdr-top">
         <div>
             <h1>RSI Recovery Scan — All Timeframes &middot; 30&ndash;55 band, down &rarr; up only</h1>
-            <div class="sub" id="tfSubtitle">Generated 2026-08-29 16:51:50 &middot; <span class="count">10</span> stock(s) matched (Daily)</div>
+            <div class="sub" id="tfSubtitle">Generated 2026-08-30 16:56:06 &middot; <span class="count">10</span> stock(s) matched (Daily)</div>
         </div>
         <div class="criteria-chips" title="RSI(14) formed a real trough within 20 candles (declining >= 5.0 pts over 8 bars), recovered >= 5.0 pts off that trough, sits within 1.5 pts of its post-trough high, and is back above both the 9- and 21-period RSI averages.">
             <span class="crit-chip tf">Daily</span>
@@ -1590,7 +1590,7 @@
     function updateSubtitle(tf) {
         const meta = TF_META[tf];
         document.getElementById('tfSubtitle').innerHTML =
-            'Generated 2026-08-29 16:51:50 &middot; <span class="count">' + meta.count + '</span> stock(s) matched (' + meta.label + ')';
+            'Generated 2026-08-30 16:56:06 &middot; <span class="count">' + meta.count + '</span> stock(s) matched (' + meta.label + ')';
         const tfChip = document.querySelector('.crit-chip.tf');
         if (tfChip) tfChip.textContent = meta.label;
     }
